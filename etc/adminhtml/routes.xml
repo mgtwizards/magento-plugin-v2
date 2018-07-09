@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="porterbuddy" frontName="porterbuddy">
+            <module name="Porterbuddy_Porterbuddy" />
+        </route>
+    </router>
+</config>

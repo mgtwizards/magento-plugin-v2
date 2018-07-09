@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Quote\Api\Data\ShippingMethodInterface">
+        <attribute code="porterbuddy_info" type="Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface" />
+    </extension_attributes>
+</config>

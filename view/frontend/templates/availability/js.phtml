@@ -1,0 +1,30 @@
+<?php
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+
+/** @var Porterbuddy\Porterbuddy\Block\Availability $block */
+$helper = $block->getHelper();
+?>
+<script type="text/x-magento-init">
+    {
+        "#porterbuddy-availability": {
+            "porterbuddyAvailabilityWidget": {
+                "mapsApiKey": <?= json_encode($helper->getMapsApiKey()) ?>,
+                "getLocationURL": "<?= $block->getUrl('porterbuddy/delivery/location') ?>",
+                "getAvailabilityURL": "<?= $block->getUrl('porterbuddy/delivery/availability') ?>",
+                "isAlwaysShow": <?= json_encode($block->isAlwaysShow()) ?>,
+                "locationDiscovery": <?= json_encode($helper->getLocationDiscovery()) ?>,
+                "defaultCountry": <?= json_encode($block->getDefaultCountry()) ?>,
+                "textClickToSee": <?= json_encode($helper->getAvailabilityTextClickToSee()) ?>,
+                "textFetching": <?= json_encode($helper->processPlaceholders(
+                    $helper->getAvailabilityTextFetching()
+                )) ?>,
+                "textDeliveryUnavailable": <?= json_encode($helper->processPlaceholders(
+                    $helper->getAvailabilityTextPostcodeError()
+                )) ?>
+            }
+        }
+    }
+</script>

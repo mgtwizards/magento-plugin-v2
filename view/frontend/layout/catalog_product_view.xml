@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Porterbuddy_Porterbuddy::css/porterbuddy.css"/>
+    </head>
+    <body>
+        <referenceContainer name="product.info.extrahint">
+            <container name="porterbuddy.availability">
+                <block name="porterbuddy.availability.widget" class="Porterbuddy\Porterbuddy\Block\Availability"
+                       template="Porterbuddy_Porterbuddy::availability/widget.phtml" />
+                <block name="porterbuddy.availability.js" class="Porterbuddy\Porterbuddy\Block\Availability"
+                       template="Porterbuddy_Porterbuddy::availability/js.phtml" />
+            </container>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block name="porterbuddy.availability.popup" class="Porterbuddy\Porterbuddy\Block\Availability"
+                   template="Porterbuddy_Porterbuddy::availability/popup.phtml" />
+        </referenceContainer>
+    </body>
+</page>

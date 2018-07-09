@@ -1,0 +1,47 @@
+<?php
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+/** @var \Porterbuddy\Porterbuddy\Block\Adminhtml\Info $block */
+$order = $block->getOrder();
+$shippingAddress = $order->getShippingAddress();
+?>
+<?php if ($block->canEditOptions()): ?>
+    <form method="post" action="<?= $block->getUrl('porterbuddy/location/options', ['order_id' => $order->getId()]) ?>">
+        <?= $block->getBlockHtml('formkey')?>
+        <div>
+            <strong><?= __('Leave package outside the door') ?>:</strong>
+            <select name="leave_doorstep">
+                <option value="0" <?php if (!$block->getLeaveDoorstep()) echo ' selected="selected"'?>>
+                    <?= __('No') ?>
+                </option>
+                <option value="1" <?php if ($block->getLeaveDoorstep()) echo ' selected="selected"'?>>
+                    <?= __('Yes') ?>
+                </option>
+            </select>
+        </div>
+        <div>
+            <strong><?= __('Message to courier') ?>:</strong><br/>
+            <textarea name="comment" style="height:8em; width: 99%;" maxlength="512"><?= $block->escapeHtml($block->getComment()) ?></textarea>
+        </div>
+        <div>
+            <button type="submit" class="scalable save">
+                <?= __('Save Options') ?>
+            </button>
+        </div>
+    </form>
+<?php else: ?>
+    <div>
+        <strong><?=  __('Leave package outside the door') ?>:</strong>
+        <?=  $block->getLeaveDoorstep() ? __('Yes') : __('No') ?>
+    </div>
+    <div>
+        <strong><?=  __('Message to courier') ?>:</strong><br/>
+        <?php if (strlen($block->getComment())): ?>
+            <?=  nl2br($block->escapeHtml($block->getComment())) ?>
+        <?php else: ?>
+            <i><?=  __('None') ?></i>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

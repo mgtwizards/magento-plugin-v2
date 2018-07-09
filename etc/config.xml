@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <porterbuddy>
+                <active>0</active>
+                <model>Porterbuddy\Porterbuddy\Model\Carrier</model>
+                <title>Express Shipping With Porterbuddy</title>
+                <description>Simple and flexible. You decide when and where delivery will take place, at home, at work or elsewhere.</description>
+                <asap_name>Express shipping</asap_name>
+                <choose_later_name>I will select specific time later</choose_later_name>
+                <show_availability>only_available</show_availability>
+                <location_discovery>browser,ip</location_discovery>
+                <availability_text_click_to_see><![CDATA[<a>Click here to see if you are eligible for same day delivery</a>]]></availability_text_click_to_see>
+                <location_link_template><![CDATA[Deliver to {{location}}. <a class="button">Change</a>]]></location_link_template>
+                <availability_text_fetching>Fetching delivery options...</availability_text_fetching>
+                <availability_template>Want it {{date}}? Order in the next {{countdown}}</availability_template>
+                <availability_text_postcode_error>Sorry, same day delivery is not currently available to {{postcode}}</availability_text_postcode_error>
+                <availability_text_delivery_out_of_stock>Sorry, product is out of stock</availability_text_delivery_out_of_stock>
+                <availability_text_delivery_no_date>Sorry, same day delivery is not currently available</availability_text_delivery_no_date>
+                <availability_choose_popup_title>Choose your delivery location</availability_choose_popup_title>
+                <availability_choose_popup_description>Delivery options and delivery speeds may vary for different locations</availability_choose_popup_description>
+                <availability_auto_update_composite>1</availability_auto_update_composite>
+                <days_ahead>1</days_ahead>
+                <timeslot_selection>checkout</timeslot_selection>
+                <pickup_windows_extra>3</pickup_windows_extra>
+                <timeslot_cutoff>1</timeslot_cutoff>
+                <timeslot_window>2</timeslot_window>
+                <asap_cutoff>1</asap_cutoff>
+                <porterbuddy_until>22:00</porterbuddy_until>
+                <hours_mon>00:00,24:00</hours_mon>
+                <hours_tue>00:00,24:00</hours_tue>
+                <hours_wed>00:00,24:00</hours_wed>
+                <hours_thu>00:00,24:00</hours_thu>
+                <hours_fri>00:00,24:00</hours_fri>
+                <hours_sat>00:00,24:00</hours_sat>
+                <hours_sun>00:00,24:00</hours_sun>
+                <require_signature_default>0</require_signature_default>
+                <id_check_default>0</id_check_default>
+                <only_to_recipient_default>0</only_to_recipient_default>
+                <return_enabled>0</return_enabled>
+                <return_text>I would like to return items that do not match me</return_text>
+                <return_short_text>+ included return</return_short_text>
+                <refresh_options_timeout>5</refresh_options_timeout>
+                <leave_doorstep_text>Allow the courier to leave the package outside the door</leave_doorstep_text>
+                <comment_text>Optional message to the courier</comment_text>
+                <discount_type>none</discount_type>
+                <auto_create_shipment>1</auto_create_shipment>
+                <api_mode>development</api_mode>
+                <development_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <testing_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <production_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <inbound_token backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <maps_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <default_phone_code>+47</default_phone_code>
+                <packager_mode>per_item</packager_mode>
+                <packing_time>15</packing_time>
+                <weight_unit>KILOGRAM</weight_unit>
+                <dimension_unit>CENTIMETER</dimension_unit>
+                <error_email_enabled>1</error_email_enabled>
+                <error_email_template>carriers_porterbuddy_error_email_template</error_email_template>
+                <!-- internal constants -->
+                <api_timeout>30</api_timeout>
+                <development_api_url>https://api.porterbuddy-staging.com</development_api_url>
+                <testing_api_url>https://api.porterbuddy-test.com</testing_api_url>
+                <production_api_url>https://api.porterbuddy.com</production_api_url>
+            </porterbuddy>
+        </carriers>
+    </default>
+</config>

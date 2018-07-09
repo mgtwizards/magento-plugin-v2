@@ -1,0 +1,16 @@
+<!--
+  ~ @author Convert Team
+  ~ @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+  -->
+
+<!-- ko if: showTimeslots -->
+<div class="porterbuddy-widget-date-selectors">
+    <a href="javascript: void(0);" class="porterbuddy-widget-date-selector prev-date" data-bind="css: {available: prevDateAvailable(), unavailable: !prevDateAvailable()}, click: setPrevDate">
+        <span data-bind="i18n: 'Previous Day'"></span>
+    </a>
+    <span id="selected-date" class="porterbuddy-widget-selected-date selected-date" data-bind="html: selectedDateLabel"></span>
+    <a href="javascript: void(0);" class="porterbuddy-widget-date-selector next-date" data-bind="css: {available: nextDateAvailable(), unavailable: !nextDateAvailable()}, click: setNextDate">
+        <span data-bind="i18n: 'Next Day'"></span>
+    </a>
+</div>
+<!-- /ko -->

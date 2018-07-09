@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Logger -->
+    <virtualType name="loggerPorterbuddy" type="Porterbuddy\Porterbuddy\Model\Logger\Logger" />
+    <type name="Porterbuddy\Porterbuddy\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Model\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">porterbuddy</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Porterbuddy\Porterbuddy\Model\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Controller\Delivery\Location">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Model\Carrier">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+            <argument name="rateResultFactory" xsi:type="object">porterbuddyRateResultFactory</argument>
+        </arguments>
+    </type>
+    <virtualType name="porterbuddyRateResultFactory" type="Magento\Shipping\Model\Rate\ResultFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Porterbuddy\Porterbuddy\Model\Rate\Result</argument>
+        </arguments>
+    </virtualType>
+    <type name="Porterbuddy\Porterbuddy\Controller\Adminhtml\Location\Options">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Helper\Data">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Model\Shipment">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Model\ErrorNotifier\EmailNotifier">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <virtualType name="porterbuddyHttpClientFactory" type="Magento\Framework\HTTP\ClientFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Porterbuddy\Porterbuddy\Model\Client\Curl</argument>
+        </arguments>
+    </virtualType>
+    <type name="Porterbuddy\Porterbuddy\Model\Api">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+            <argument name="clientFactory" xsi:type="object">porterbuddyHttpClientFactory</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Observer\PaymentPlaceAfterCheckPaid">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Observer\OrderSaveBeforeCheckPaid">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Observer\ShipmentSaveBeforeSendShipment">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Model\Packager">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+            <argument name="packagers" xsi:type="array">
+                <item name="per_item" xsi:type="array">
+                    <item name="model" xsi:type="object">Porterbuddy\Porterbuddy\Model\Packager\Peritem</item>
+                    <item name="label" xsi:type="string" translate="true">Send each product as individual parcel</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <preference for="Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface" type="Porterbuddy\Porterbuddy\Model\MethodInfo" />
+    <type name="Magento\Quote\Model\Cart\ShippingMethodConverter">
+        <plugin name="porterbuddy" type="Porterbuddy\Porterbuddy\Plugin\Quote\Cart\ShippingMethodConverter" sortOrder="10" />
+    </type>
+
+    <preference for="Porterbuddy\Porterbuddy\Model\ErrorNotifier\NotifierInterface" type="Porterbuddy\Porterbuddy\Model\ErrorNotifier\Composite" />
+    <type name="Porterbuddy\Porterbuddy\Model\ErrorNotifier\Composite">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+            <argument name="notifiers" xsi:type="array">
+                <item name="email" xsi:type="object">Porterbuddy\Porterbuddy\Model\ErrorNotifier\EmailNotifier</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Porterbuddy_Porterbuddy::css/porterbuddy.css"/>
+    </head>
+    <body>
+        <referenceBlock name="checkout.root">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="shipping-step" xsi:type="array">
+                                            <item name="children" xsi:type="array">
+                                                <item name="shippingAddress" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="shippingAdditional" xsi:type="array">
+                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                            <item name="displayArea" xsi:type="string">shippingAdditional</item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="porterbuddy" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">porterbuddyCheckoutWidget</item>
+                                                                    <item name="children" xsi:type="array">
+                                                                        <item name="header-before" xsi:type="array">
+                                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                                            <item name="displayArea" xsi:type="string">header-before</item>
+                                                                            <item name="children" xsi:type="array">
+                                                                                <!-- additional fields -->
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="header-after" xsi:type="array">
+                                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                                            <item name="displayArea" xsi:type="string">header-after</item>
+                                                                            <item name="children" xsi:type="array">
+                                                                                <!-- additional fields -->
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="footer-before" xsi:type="array">
+                                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                                            <item name="displayArea" xsi:type="string">footer-before</item>
+                                                                            <item name="children" xsi:type="array">
+                                                                                <!-- additional fields -->
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="footer-after" xsi:type="array">
+                                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                                            <item name="displayArea" xsi:type="string">footer-after</item>
+                                                                            <item name="children" xsi:type="array">
+                                                                                <!-- additional fields -->
+                                                                            </item>
+                                                                        </item>
+                                                                    </item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

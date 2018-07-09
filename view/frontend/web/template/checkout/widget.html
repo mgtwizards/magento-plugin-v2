@@ -1,0 +1,24 @@
+<!--
+  ~ @author Convert Team
+  ~ @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+  -->
+<div id="porterbuddy-widget" class="porterbuddy-widget porterbuddy-widget-item" data-bind="visible: visible">
+    <!-- ko foreach: getRegion('header-before') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+    <!-- ko template: 'Porterbuddy_Porterbuddy/checkout/header' --><!-- /ko -->
+    <!-- ko foreach: getRegion('header-after') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+
+    <!-- ko template: 'Porterbuddy_Porterbuddy/checkout/dates' --><!-- /ko -->
+    <!-- ko template: 'Porterbuddy_Porterbuddy/checkout/timeslots' --><!-- /ko -->
+
+    <!-- ko foreach: getRegion('footer-before') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+    <!-- ko template: 'Porterbuddy_Porterbuddy/checkout/footer' --><!-- /ko -->
+    <!-- ko foreach: getRegion('footer-after') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+</div>

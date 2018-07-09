@@ -1,0 +1,32 @@
+<?php
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+
+/** @var Porterbuddy\Porterbuddy\Block\Availability $block */
+$helper = $block->getHelper();
+?>
+<form id="porterbuddy-popup" class="porterbuddy-popup" style="display: none">
+    <div class="porterbuddy-popup__header">
+        <div class="porterbuddy-widget-logo-wrapper">
+            <img src="<?= $block->getViewFileUrl('Porterbuddy_Porterbuddy/images/logo_porterbuddy.svg') ?>"
+                 class="image image-logo" width="118" height="24" alt="Porterbuddy" />
+        </div>
+
+        <h2 class="porterbuddy-popup__header__title" data-role="title"><?= $helper->getAvailabilityChoosePopupTitle() ?></h2>
+        <p class="porterbuddy-popup__header__description" data-role="subTitle"><?= $helper->getAvailabilityChoosePopupDescription() ?></p>
+        <div id="porterbuddy-message" class="porterbuddy-message alert" style="display: none;"></div>
+    </div>
+    <div class="porterbuddy-popup__content">
+        <div class="porterbuddy-popup__content__address">
+            <span><?= __('Enter post code') ?>:</span>
+            <input type="text" id="porterbuddy-popup-postcode" class="porterbuddy-popup-postcode input-text validate-zip-international required-entry" value="" />
+        </div>
+    </div>
+    <div class="porterbuddy-popup__footer">
+        <button type="button" class="button porterbuddy-popup-save" id="porterbuddy-popup-save">
+            <?= __('Save') ?>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Convert Team
+ * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="carriers_porterbuddy_error_email_template" label="Porterbuddy API error notification" file="porterbuddy_error.html" type="html" module="Porterbuddy_Porterbuddy" area="frontend"/>
+</config>
