@@ -11,17 +11,17 @@
         <section id="carriers">
             <group id="porterbuddy" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>Porterbuddy</label>
-                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
                 </field>
-                <field id="description" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="description" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Description</label>
                 </field>
-                <field id="choose_later_name" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="choose_later_name" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Choose Timeslot Later Name</label>
                 </field>
                 <field id="api_mode" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -52,7 +52,7 @@
                 <field id="sort_order" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sort Order</label>
                 </field>
-                <field id="debug" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="debug" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
@@ -61,11 +61,11 @@
                     <label>Availability Widget Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="show_availability" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="show_availability" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Show Geo-based Availibility Widget</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Availability</source_model>
                 </field>
-                <field id="location_discovery" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="location_discovery" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Location Discovery</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Location</source_model>
                     <can_be_empty>1</can_be_empty>
@@ -74,46 +74,46 @@
                     <label>Google Maps API Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
-                <field id="postcodes" translate="label comment" type="textarea" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="postcodes" translate="label comment" type="textarea" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Allowed Postcodes</label>
                     <comment>Each on a separate line, leave empty to allow any</comment>
                 </field>
-                <field id="availability_text_click_to_see" translate="label tooltip" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_click_to_see" translate="label tooltip" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Click to see text</label>
                     <tooltip><![CDATA[Can use &lt;a&gt;link&lt;/a&gt;, &lt;a class="button"&gt;link&lt;/a&gt; for clickable link]]></tooltip>
                 </field>
-                <field id="location_link_template" translate="label comment tooltip" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="location_link_template" translate="label comment tooltip" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Location Link Template</label>
                     <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                     <tooltip><![CDATA[Can use &lt;a&gt;link&lt;/a&gt;, &lt;a class="button"&gt;link&lt;/a&gt; for clickable link]]></tooltip>
                 </field>
-                <field id="availability_text_fetching" translate="label comment" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_fetching" translate="label comment" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Availability fetching text</label>
                     <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                 </field>
-                <field id="availability_template" translate="label comment" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_template" translate="label comment" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Availability Text Template</label>
                     <comment>Can use [[date]], [[countdown]] placeholders</comment>
                 </field>
-                <field id="availability_text_postcode_error" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_postcode_error" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Postcode not available text</label>
                     <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                 </field>
-                <field id="availability_text_delivery_out_of_stock" translate="label comment" type="text" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_delivery_out_of_stock" translate="label comment" type="text" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product is out of stock text</label>
                     <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                 </field>
-                <field id="availability_text_delivery_no_date" translate="label comment" type="text" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_delivery_no_date" translate="label comment" type="text" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>No available dates text</label>
                     <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                 </field>
-                <field id="availability_choose_popup_title" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_choose_popup_title" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Availability Change Popup Title</label>
                 </field>
-                <field id="availability_choose_popup_description" translate="label" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_choose_popup_description" translate="label" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Availability Change Popup Description</label>
                 </field>
-                <field id="availability_auto_update_composite" translate="label comment" type="select" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_auto_update_composite" translate="label comment" type="select" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Load configurable product availability</label>
                     <comment>Disable if automatic simple option preselect is installed to eliminate double loading and widget flickering</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -123,34 +123,34 @@
                     <label>Checkout Widget Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="timeslot_selection" translate="label" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="timeslot_selection" translate="label" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Pick time slot</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Timeslot</source_model>
                 </field>
-                <field id="days_ahead" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="days_ahead" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Available Days Ahead</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="return_enabled" translate="label" type="select" sortOrder="330" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="return_enabled" translate="label" type="select" sortOrder="330" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Return Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="return_text" translate="label comment" type="text" sortOrder="340" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="return_text" translate="label comment" type="text" sortOrder="340" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Return Text</label>
                     <comment>Checkbox text on checkout widget</comment>
                 </field>
-                <field id="return_short_text" translate="label comment" type="text" sortOrder="350" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="return_short_text" translate="label comment" type="text" sortOrder="350" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Return Short Text</label>
                     <comment>Added to shipping method in order view</comment>
                 </field>
-                <field id="refresh_options_timeout" translate="label" type="text" sortOrder="370" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="refresh_options_timeout" translate="label" type="text" sortOrder="370" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Refresh delivery options every, minutes</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="leave_doorstep_text" translate="label" type="text" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="leave_doorstep_text" translate="label" type="text" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Leave at doorstep checkbox text</label>
                 </field>
-                <field id="comment_text" translate="label" type="text" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="comment_text" translate="label" type="text" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Comment to courier text</label>
                 </field>
 
@@ -158,19 +158,19 @@
                     <label>Prices Override</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="price_override_express" translate="label" type="text" sortOrder="410" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="price_override_express" translate="label" type="text" sortOrder="410" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Express delivery price override</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="price_override_express_return" translate="label" type="text" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="price_override_express_return" translate="label" type="text" sortOrder="420" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Express delivery with return price override</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="price_override_delivery" translate="label" type="text" sortOrder="430" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="price_override_delivery" translate="label" type="text" sortOrder="430" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Normal delivery price override</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="price_override_delivery_return" translate="label" type="text" sortOrder="440" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="price_override_delivery_return" translate="label" type="text" sortOrder="440" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Normal delivery with return price override</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
@@ -179,25 +179,25 @@
                     <label>Shipping Discount</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="discount_type" translate="label" type="select" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="discount_type" translate="label" type="select" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Discount Type</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\DiscountType</source_model>
                 </field>
-                <field id="discount_subtotal" translate="label" type="text" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="discount_subtotal" translate="label" type="text" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Minimum Order Amount</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                     <depends>
                         <field id="discount_type" separator=",">fixed,percent</field>
                     </depends>
                 </field>
-                <field id="discount_amount" translate="label" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="discount_amount" translate="label" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Discount Amount</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                     <depends>
                         <field id="discount_type">fixed</field>
                     </depends>
                 </field>
-                <field id="discount_percent" translate="label" type="text" sortOrder="540" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="discount_percent" translate="label" type="text" sortOrder="540" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Discount Percent</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                     <depends>
@@ -209,37 +209,37 @@
                     <label>Open Hours</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="hours_mon" translate="label" type="select" sortOrder="620" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_mon" translate="label" type="select" sortOrder="620" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Monday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_tue" translate="label" type="select" sortOrder="630" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_tue" translate="label" type="select" sortOrder="630" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Tuesday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_wed" translate="label" type="select" sortOrder="640" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_wed" translate="label" type="select" sortOrder="640" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Wednesday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_thu" translate="label" type="select" sortOrder="650" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_thu" translate="label" type="select" sortOrder="650" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Thursday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_fri" translate="label" type="select" sortOrder="660" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_fri" translate="label" type="select" sortOrder="660" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Friday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_sat" translate="label" type="select" sortOrder="670" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_sat" translate="label" type="select" sortOrder="670" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Saturday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
                 </field>
-                <field id="hours_sun" translate="label" type="select" sortOrder="680" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="hours_sun" translate="label" type="select" sortOrder="680" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sunday</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Hours</source_model>
                     <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Hours</frontend_model>
@@ -249,35 +249,35 @@
                     <label>Porterbuddy available until, minutes before closing time</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="porterbuddy_until" translate="label" type="text" sortOrder="710" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until" translate="label" type="text" sortOrder="710" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Default</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_mon" translate="label" type="text" sortOrder="720" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_mon" translate="label" type="text" sortOrder="720" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Monday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_tue" translate="label" type="text" sortOrder="730" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_tue" translate="label" type="text" sortOrder="730" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Tuesday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_wed" translate="label" type="text" sortOrder="740" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_wed" translate="label" type="text" sortOrder="740" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Wednesday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_thu" translate="label" type="text" sortOrder="750" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_thu" translate="label" type="text" sortOrder="750" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Thursday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_fri" translate="label" type="text" sortOrder="760" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_fri" translate="label" type="text" sortOrder="760" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Friday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_sat" translate="label" type="text" sortOrder="770" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_sat" translate="label" type="text" sortOrder="770" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Saturday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="porterbuddy_until_sun" translate="label" type="text" sortOrder="780" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="porterbuddy_until_sun" translate="label" type="text" sortOrder="780" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sunday</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
@@ -286,19 +286,19 @@
                     <label>Creating Shipment</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="auto_create_shipment" translate="label" type="select" sortOrder="810" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="auto_create_shipment" translate="label" type="select" sortOrder="810" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Create shipment automatically</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="default_phone_code" translate="label comment" type="text" sortOrder="820" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="default_phone_code" translate="label comment" type="text" sortOrder="820" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default Phone Code</label>
                     <comment>Added for phone numbers without phone code, e.g. "12 34 56 78" instead of "+47 12 34 56 78"</comment>
                 </field>
-                <field id="packager_mode" translate="label" type="select" sortOrder="830" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="packager_mode" translate="label" type="select" sortOrder="830" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Packager mode</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\PackagerMode</source_model>
                 </field>
-                <field id="packing_time" translate="label" type="text" sortOrder="840" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="packing_time" translate="label" type="text" sortOrder="840" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Packing time, minutes</label>
                 </field>
 
@@ -306,20 +306,20 @@
                     <label>Verifications - default settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="require_signature_default" translate="label" type="select" sortOrder="910" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="require_signature_default" translate="label" type="select" sortOrder="910" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Require signature</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="min_age_check_default" translate="label comment" type="text" sortOrder="920" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="min_age_check_default" translate="label comment" type="text" sortOrder="920" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Minimum age check</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                     <comment>Optional</comment>
                 </field>
-                <field id="id_check_default" translate="label" type="select" sortOrder="930" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="id_check_default" translate="label" type="select" sortOrder="930" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>ID check</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="only_to_recipient_default" translate="label" type="select" sortOrder="940" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="only_to_recipient_default" translate="label" type="select" sortOrder="940" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Only to recipient</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
@@ -328,20 +328,20 @@
                     <label>Verifications - per product</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="require_signature_attr" translate="label" type="select" sortOrder="1010" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="require_signature_attr" translate="label" type="select" sortOrder="1010" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Require signature attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
-                <field id="min_age_check_attr" translate="label" type="select" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="min_age_check_attr" translate="label" type="select" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Minimum age check attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="id_check_attr" translate="label" type="select" sortOrder="1030" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="id_check_attr" translate="label" type="select" sortOrder="1030" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>ID check attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
-                <field id="only_to_recipient_attr" translate="label" type="select" sortOrder="1040" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="only_to_recipient_attr" translate="label" type="select" sortOrder="1040" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Only to recipient attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
@@ -350,44 +350,44 @@
                     <label>Packages Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="weight_unit" translate="label comment" type="select" sortOrder="1110" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="weight_unit" translate="label comment" type="select" sortOrder="1110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Weight Unit</label>
                     <comment>Select Weight Unit for Products in Magento</comment>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Weight</source_model>
                 </field>
-                <field id="default_product_weight" translate="label comment" type="text" sortOrder="1120" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="default_product_weight" translate="label comment" type="text" sortOrder="1120" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Default Product Weight</label>
                     <comment>Will be used for Products with undefined Weight</comment>
                     <validate>required-entry validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="dimension_unit" translate="label comment" type="select" sortOrder="1130" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="dimension_unit" translate="label comment" type="select" sortOrder="1130" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Dimension Unit</label>
                     <comment>Select Dimension Unit for Products in Magento</comment>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Dimension</source_model>
                 </field>
-                <field id="height_attribute" translate="label" type="select" sortOrder="1140" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="height_attribute" translate="label" type="select" sortOrder="1140" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Height attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
-                <field id="width_attribute" translate="label" type="select" sortOrder="1150" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="width_attribute" translate="label" type="select" sortOrder="1150" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Width attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
-                <field id="length_attribute" translate="label" type="select" sortOrder="1160" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="length_attribute" translate="label" type="select" sortOrder="1160" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Length attribute</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Attribute</source_model>
                 </field>
-                <field id="default_product_height" translate="label comment" type="text" sortOrder="1170" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="default_product_height" translate="label comment" type="text" sortOrder="1170" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Default Product Height</label>
                     <comment>Will be used for Products with undefined Height</comment>
                     <validate>required-entry validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="default_product_width" translate="label comment" type="text" sortOrder="1180" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="default_product_width" translate="label comment" type="text" sortOrder="1180" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Default Product Width</label>
                     <comment>Will be used for Products with undefined Width</comment>
                     <validate>required-entry validate-number validate-zero-or-greater</validate>
                 </field>
-                <field id="default_product_length" translate="label comment" type="text" sortOrder="1190" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="default_product_length" translate="label comment" type="text" sortOrder="1190" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Default Product Length</label>
                     <comment>Will be used for Products with undefined Length</comment>
                     <validate>required-entry validate-number validate-zero-or-greater</validate>
@@ -397,15 +397,15 @@
                     <label>API Error Notification</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="error_email_enabled" translate="label" type="select" sortOrder="1210" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="error_email_enabled" translate="label" type="select" sortOrder="1210" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Email Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="error_email_identity" translate="label" type="select" sortOrder="1220" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="error_email_identity" translate="label" type="select" sortOrder="1220" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Email Sender</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
                 </field>
-                <field id="error_email_template" translate="label" type="select" sortOrder="1230" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="error_email_template" translate="label" type="select" sortOrder="1230" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Email Template</label>
                     <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
                 </field>
