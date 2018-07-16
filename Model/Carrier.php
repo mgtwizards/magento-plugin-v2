@@ -227,7 +227,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $result = $this->rateResultFactory->create();
 
         // multi warehousing may disable this method if items are physically located in different places
-        $this->eventManager->dispatch('convert_porterbuddy_collect_rates', [
+        $this->eventManager->dispatch('porterbuddy_collect_rates', [
             'request' => $request,
             'result' => $result,
         ]);
@@ -235,12 +235,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             return $result;
         }
 
-        $timeslotSelection = $this->helper->getTimeslotSelection();
-        $items = $request->getallItems();
+        $items = $request->getAllItems();
+        if (!$items) {
+            return $result;
+        }
+
         /** @var \Magento\Quote\Model\Quote\Item $item */
         $item = reset($items);
         $quote = $item->getQuote();
-        $quote->setPbTimeslotSelection($timeslotSelection);
+        $quote->setPbTimeslotSelection($this->helper->getTimeslotSelection());
 
         try {
             $parameters = $this->prepareAvailabilityData($request);
@@ -294,7 +297,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         // enable to construct new result object
         $transport = new DataObject(['result' => $result]);
-        $this->eventManager->dispatch('convert_porterbuddy_collect_rates_after', [
+        $this->eventManager->dispatch('porterbuddy_collect_rates_after', [
             'request' => $request,
             'transport' => $transport,
         ]);
@@ -654,7 +657,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         }
 
         $transport = new DataObject(['params' => $params]);
-        $this->eventManager->dispatch('convert_porterbuddy_availability_data', [
+        $this->eventManager->dispatch('porterbuddy_availability_data', [
             'request' => $request,
             'transport' => $transport,
         ]);
@@ -770,7 +773,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ];
 
         $transport = new DataObject(['parameters' => $parameters]);
-        $this->eventManager->dispatch('convert_porterbuddy_create_order_data', [
+        $this->eventManager->dispatch('porterbuddy_create_order_data', [
             'transport' => $transport,
             'request' => $request,
         ]);

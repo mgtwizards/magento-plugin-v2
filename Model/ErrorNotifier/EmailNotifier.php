@@ -145,7 +145,7 @@ class EmailNotifier implements NotifierInterface
         ];
 
         $transport = new DataObject(['params' => $params]);
-        $this->eventManager->dispatch('porterbuddy_error_email_params', [
+        $this->eventManager->dispatch('error_email_params', [
             'request' => $request,
             'transport' => $transport,
         ]);
