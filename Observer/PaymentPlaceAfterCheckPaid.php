@@ -78,7 +78,7 @@ class PaymentPlaceAfterCheckPaid implements \Magento\Framework\Event\ObserverInt
         }
 
         $transport = new DataObject(['paid' => $paid]);
-        $this->eventManager->dispatch('convert_porterbuddy_payment_place_is_paid', [
+        $this->eventManager->dispatch('porterbuddy_payment_place_is_paid', [
             'payment' => $payment,
             'transport' => $transport,
         ]);

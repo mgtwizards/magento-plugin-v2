@@ -80,7 +80,7 @@ class OrderSaveBeforeCheckPaid implements \Magento\Framework\Event\ObserverInter
         }
 
         $transport = new DataObject(['paid' => $paid]);
-        $this->eventManager->dispatch('convert_porterbuddy_order_save_is_paid', [
+        $this->eventManager->dispatch('porterbuddy_order_save_is_paid', [
             'order' => $order,
             'transport' => $transport,
         ]);

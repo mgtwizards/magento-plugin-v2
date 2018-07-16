@@ -63,7 +63,7 @@ class Peritem implements PackagerInterface
         }
 
         $transport = new DataObject(['parcels' => $parcels]);
-        $this->eventManager->dispatch('convert_porterbuddy_estimate_parcels_per_item', [
+        $this->eventManager->dispatch('porterbuddy_estimate_parcels_per_item', [
             'transport' => $transport,
             'request' => $request,
         ]);
@@ -109,7 +109,7 @@ class Peritem implements PackagerInterface
         }
 
         $transport = new DataObject(['result' => $result]);
-        $this->eventManager->dispatch('convert_porterbuddy_estimate_parcels_per_item_can_ship', [
+        $this->eventManager->dispatch('porterbuddy_estimate_parcels_per_item_can_ship', [
             'transport' => $transport,
             'quote_item' => $item,
         ]);
@@ -180,7 +180,7 @@ class Peritem implements PackagerInterface
         }
 
         $transport = new DataObject(['packages' => $packages]);
-        $this->eventManager->dispatch('convert_porterbuddy_prepare_create_packages_per_item', [
+        $this->eventManager->dispatch('porterbuddy_prepare_create_packages_per_item', [
             'transport' => $transport,
             'request' => $request,
         ]);
