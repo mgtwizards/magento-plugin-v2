@@ -25,12 +25,11 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
         Data $helper,
         Exception $exceptionHandler,
         DriverInterface $filesystem,
-        $filePath = null,
-        $fileName = null
+        $filePath = null
     ) {
         $this->exceptionHandler = $exceptionHandler;
         $this->loggerType = $helper->getDebug() ? \Monolog\Logger::DEBUG : \Monolog\Logger::INFO;
-        parent::__construct($filesystem, $filePath, $fileName);
+        parent::__construct($filesystem, $filePath);
     }
 
     /**
