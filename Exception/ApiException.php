@@ -14,10 +14,10 @@ class ApiException extends \Porterbuddy\Porterbuddy\Exception
      */
     protected $logData;
 
-    public function __construct(Phrase $phrase, array $logData = [], \Exception $cause = null, $code = 0)
+    public function __construct(Phrase $phrase, array $logData = [], \Exception $cause = null)
     {
         $this->logData = $logData;
-        parent::__construct($phrase, $cause, $code);
+        parent::__construct($phrase, $cause);
     }
 
     /**
