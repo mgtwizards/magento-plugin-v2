@@ -190,12 +190,14 @@
 
 /* Popup */
 .porterbuddy-popup {
-    padding: 1em 2em;
+    padding: 0 0 2em;
+}
+.porterbuddy-availability .modal-inner-wrap {
     max-width: 800px;
 }
 
 @media screen and (max-width: 767px) {
-    .porterbuddy-popup {
+    .porterbuddy-availability .modal-inner-wrap {
         max-width: 340px;
         margin-left: auto;
         margin-right: auto;

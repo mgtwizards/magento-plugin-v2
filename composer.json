@@ -3,10 +3,9 @@
     "description": "Porterbuddy module for Magento 2",
     "type": "magento2-module",
     "require": {
-        "magento/module-config": ">=100.1.0"
-    },
-    "suggest": {
-        "tobai/magento2-geo-ip2": "~1.0"
+        "magento/module-config": ">=100.1.0",
+        "tobai/magento2-geo-ip2": "~1.0",
+        "ext-intl": "*"
     },
     "license": [
         "OSL-3.0"

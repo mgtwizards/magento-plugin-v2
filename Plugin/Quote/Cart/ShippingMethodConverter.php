@@ -85,6 +85,9 @@ class ShippingMethodConverter
                 $dateLabel = $this->localeDate->formatDate($startTime, \IntlDateFormatter::FULL);
                 $dateLabel = preg_replace('/\s+\d+$/', '', $dateLabel); // remove year
                 $dateLabel = rtrim($dateLabel, ', ');
+                if (Carrier::METHOD_EXPRESS == $methodInfo->getType()) {
+                    $label = $this->helper->getAsapName();
+                }
             } else {
                 $dateKey = 'delivery-type';
                 $dateLabel = __('Select later');

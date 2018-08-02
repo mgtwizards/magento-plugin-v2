@@ -21,6 +21,9 @@
                 <field id="description" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Description</label>
                 </field>
+                <field id="asap_name" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Express Delivery Name</label>
+                </field>
                 <field id="choose_later_name" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Choose Timeslot Later Name</label>
                 </field>
