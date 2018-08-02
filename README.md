@@ -9,9 +9,9 @@ Porterbuddy Magento 2
 - email alerts when shipment submit fails
 
 Supported Magento versions:
-- 2.0 (separate branch with system.xml compatibility fixes - don't use `canRestore` attribute)
-- 2.1
 - 2.2
+- 2.1
+- 2.0 (*-patch branch with system.xml compatibility fixes - don't use `canRestore` attribute)
 
 
 ## Installation with Composer
@@ -40,11 +40,7 @@ Magento requires these fields pupulated in order to submit shipment:
 
 ## Enabling IP based postcode lookup
 
-1. Install Composer module:
-
-    `composer require tobai/magento2-geo-ip2`
-
-1. Enable it in Magento
+1. Enable Tobai Geoip2 module in Magento
 
     ```
     bin/magento module:enable Tobai_GeoIp2

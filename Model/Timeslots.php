@@ -267,7 +267,9 @@ class Timeslots
             $tomorrow = clone $today;
             $tomorrow->modify('+1 day');
 
-            if ($startTime->format('Y-m-d') == $today->format('Y-m-d')) {
+            if (Carrier::METHOD_EXPRESS == $methodInfo->getType()) {
+                $dayOfWeek = $this->helper->getAsapName();
+            } elseif ($startTime->format('Y-m-d') == $today->format('Y-m-d')) {
                 $dayOfWeek = __('Today');
             } elseif ($startTime->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
                 $dayOfWeek = __('Tomorrow');

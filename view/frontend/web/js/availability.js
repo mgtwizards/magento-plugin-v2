@@ -585,7 +585,7 @@ define([
         openPopup: function () {
             if (!this.popup) {
                 this.$popup.modal({
-                    modalClass: '',
+                    modalClass: 'porterbuddy-availability',
                     type: 'popup',
                     buttons: [],
                 });

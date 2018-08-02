@@ -18,6 +18,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_ACTIVE = 'carriers/porterbuddy/active';
     const XML_PATH_TITLE = 'carriers/porterbuddy/title';
     const XML_PATH_DESCRIPTION = 'carriers/porterbuddy/description';
+    const XML_PATH_ASAP_NAME = 'carriers/porterbuddy/asap_name';
     const XML_PATH_CHOOSE_LATER_NAME = 'carriers/porterbuddy/choose_later_name';
     const XML_PATH_AUTO_CREATE_SHIPMENT = 'carriers/porterbuddy/auto_create_shipment';
     const XML_PATH_API_MODE = 'carriers/porterbuddy/api_mode';
@@ -165,6 +166,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getTitle()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_TITLE, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAsapName()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ASAP_NAME, ScopeInterface::SCOPE_STORE);
     }
 
     /**
