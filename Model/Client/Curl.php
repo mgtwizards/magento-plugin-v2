@@ -8,6 +8,18 @@ namespace Porterbuddy\Porterbuddy\Model\Client;
 class Curl extends \Magento\Framework\HTTP\Client\Curl
 {
     /**
+     * Max supported protocol by curl CURL_SSLVERSION_TLSv1_2
+     * @var int
+     */
+    private $sslVersion;
+
+    public function __construct(int $sslVersion = null)
+    {
+        $this->sslVersion = $sslVersion;
+        parent::__construct($sslVersion);
+    }
+
+    /**
      * Makes request with JSON params support
      *
      * Magento Curl HTTP client cannot send JSON encoded requests until 2.1.14

@@ -5,6 +5,7 @@
     "require": {
         "magento/module-config": ">=100.1.0",
         "tobai/magento2-geo-ip2": "~1.0",
+        "ext-curl": "*",
         "ext-intl": "*"
     },
     "license": [

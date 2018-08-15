@@ -223,6 +223,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     public function collectRates(RateRequest $request)
     {
+        if (!$this->helper->getActive()) {
+            return false;
+        }
+
         /** @var Result $result */
         $result = $this->rateResultFactory->create();
 
@@ -541,7 +545,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         try {
             $parameters = $this->prepareCreateOrderData($request);
-            $orderDetails = $this->api->createOrder($parameters);
+            $idempotencyKey = $this->getShipmentIdempotencyKey($request);
+            $orderDetails = $this->api->createOrder($parameters, $idempotencyKey);
         } catch (\Porterbuddy\Porterbuddy\Exception $e) {
             $this->errorNotifier->notify($e, $shipment, $request);
             $shipment->setPorterbuddyErrorNotified(true);
@@ -600,6 +605,19 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ]);
 
         return $result;
+    }
+
+    /**
+     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @return string|null
+     */
+    public function getShipmentIdempotencyKey(\Magento\Shipping\Model\Shipment\Request $request)
+    {
+        $shipment = $request->getOrderShipment();
+        $order = $shipment->getOrder();
+
+        // TODO: for part shipping, include items
+        return $order->getIncrementId();
     }
 
     /**

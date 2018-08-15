@@ -105,12 +105,13 @@ class Api
      * Create new order
      *
      * @param array $parameters
+     * @param string $idempotencyKey optional
      * @return array
      * @throws \Zend_Http_Client_Exception
      * @throws \Porterbuddy\Porterbuddy\Exception
      * @throws \Porterbuddy\Porterbuddy\Exception\ApiException
      */
-    public function createOrder(array $parameters)
+    public function createOrder(array $parameters, $idempotencyKey = null)
     {
         $apiKey = $this->helper->getApiKey();
         if (!strlen($apiKey)) {
@@ -124,12 +125,17 @@ class Api
             'api_url' => $uri,
             'api_key' => $apiKey,
             'parameters' => $parameters,
+            'idempotency_key' => $idempotencyKey,
         ];
 
-        $httpClient->setHeaders([
+        $headers = [
             'x-api-key' => $apiKey,
             'Content-type' => 'application/json',
-        ]);
+        ];
+        if ($idempotencyKey) {
+            $headers['Idempotency-Key'] = $idempotencyKey;
+        }
+        $httpClient->setHeaders($headers);
         $httpClient->setTimeout($this->helper->getApiTimeout());
 
         try {

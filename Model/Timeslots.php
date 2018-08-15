@@ -193,12 +193,17 @@ class Timeslots
         // add packing time to first window
         $packingTime = $this->helper->getPackingTime();
         /** @var \DateTime[] $window */
-        $window = reset($windows);
-        if ($window) {
+        foreach ($windows as $i => $window) {
+            // if window can't fit packing time (shop is about to close), remove it and find next
             $window['start']->modify("+$packingTime minutes");
+            if ($window['start'] > $window['end']) {
+                unset($windows[$i]);
+                continue;
+            }
+            break;
         }
 
-        // convert to API formst
+        // convert to API format
         $windows = array_map(function ($window) {
             return [
                 'start' => $this->helper->formatApiDateTime($window['start']),
@@ -206,7 +211,7 @@ class Timeslots
             ];
         }, $windows);
 
-        return $windows;
+        return array_values($windows);
     }
 
     /**

@@ -79,10 +79,17 @@ define([
             this.$form = jQuery('#product_addtocart_form');
             this.$qty = this.$form.find('#qty');
 
+            var productId = this.options.productId;
+            if (!productId && this.$form.attr('action')) {
+                var match = this.$form.attr('action').match(/product\/(\d+)/);
+                if (match) {
+                    productId = match[1];
+                }
+            }
+
             // productId, qty, anything else
-            var match = this.$form.attr('action').match(/product\/(\d+)/);
             this.params = {
-                productId: this.options.productId || (match && match[1]),
+                productId: productId,
                 qty: this.$qty.val()
             };
 
@@ -411,6 +418,7 @@ define([
                 delete this.geocodeDfd[key];
             }.bind(this));
 
+            // TODO: move this check to loadMaps to run only once
             // detect maps auth failure (bad API key) and reject
             var origAuthFailure = window.gm_authFailure;
             window.gm_authFailure = function () {

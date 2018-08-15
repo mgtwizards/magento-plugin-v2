@@ -67,6 +67,7 @@
                 <error_email_enabled>1</error_email_enabled>
                 <error_email_template>carriers_porterbuddy_error_email_template</error_email_template>
                 <!-- internal constants -->
+                <error_email_porterbuddy>dev@porterbuddy.com</error_email_porterbuddy>
                 <api_timeout>30</api_timeout>
                 <development_api_url>https://api.porterbuddy-staging.com</development_api_url>
                 <testing_api_url>https://api.porterbuddy-test.com</testing_api_url>

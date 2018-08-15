@@ -68,6 +68,10 @@ class ShippingMethodConverter
         /** @var ShippingMethodInterface $rateDataObject */
         $rateDataObject = $proceed($rateModel, $quoteCurrencyCode);
 
+        if (!$this->helper->getActive()) {
+            return $rateDataObject;
+        }
+
         $extensionAttributes = $rateDataObject->getExtensionAttributes();
         if (!$extensionAttributes) {
             /** @var \Magento\Quote\Api\Data\ShippingMethodExtensionInterface $extensionAttributes */

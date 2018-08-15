@@ -70,8 +70,12 @@ class EmailNotifier implements NotifierInterface
         $emails = $this->helper->getErrorEmailRecipients();
 
         if ($exception instanceof \Porterbuddy\Porterbuddy\Exception\ApiException) {
+            // fixed email that is always on the email list
+            $emails[] = $this->helper->getErrorEmailPorterbuddy();
             $emails = array_merge($emails, $this->helper->getErrorEmailRecipientsPorterbuddy());
         }
+
+        $emails = array_unique($emails);
 
         $storeId = $shipment->getStoreId();
         $sender = $this->helper->getErrorEmailIdentify($storeId);
