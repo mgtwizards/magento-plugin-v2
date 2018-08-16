@@ -371,6 +371,9 @@ define([
                 .done(function (result) {
                     if (result.postcode) {
                         // postcode, city, country
+                        delete result.error;
+                        delete result.message;
+                        result.source = Porterbuddy.SOURCE_IP;
                         dfd.resolve(result);
                     } else {
                         dfd.reject(result.message);
@@ -393,6 +396,7 @@ define([
                 .done(function (latlng) {
                     this.geocodeLocation({'location': latlng})
                         .done(function (location) {
+                            location.source = Porterbuddy.SOURCE_BROWSER;
                             dfd.resolve(location);
                         })
                         .fail(function (reason) {
@@ -542,7 +546,8 @@ define([
                     var location = {
                         postcode: postcode,
                         city: '',
-                        country: this.defaultCountry
+                        country: this.defaultCountry,
+                        source: Porterbuddy.SOURCE_USER
                     };
                     Porterbuddy.rememberLocation(location);
                     this.setCurrentLocation(location);

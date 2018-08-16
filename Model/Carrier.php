@@ -61,6 +61,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
     const COOKIE = 'porterbuddy_location';
 
+    const SOURCE_BROWSER = 'browser';
+    const SOURCE_IP = 'ip';
+    const SOURCE_USER = 'user';
+
     protected $_code = self::CODE;
 
     /**

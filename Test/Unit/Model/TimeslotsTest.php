@@ -56,6 +56,83 @@ class TimeslotsTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $description
      * @param string $now
+     * @param array $expected
+     *
+     * @dataProvider getAvailabilityPickupWindowsProvider
+     */
+    public function testGetAvailabilityPickupWindows($description, $now, array $expected)
+    {
+        $this->helper
+            ->method('getCurrentTime')
+            ->willReturnCallback(function() use ($now) {
+                return new \DateTime($now);
+            });
+        $this->helper
+            ->method('getOpenHours')
+            ->willReturnCallback(function($dayOfWeek) {
+                return $this->openHours[$dayOfWeek];
+            });
+        $this->helper
+            ->method('getPackingTime')
+            ->willReturn(15);
+        $this->helper
+            ->method('getRefreshOptionsTimeout')
+            ->willReturn(5);
+        $this->helper
+            ->method('getDaysAhead')
+            ->willReturn(3);
+
+        $result = $this->timeslots->getAvailabilityPickupWindows();
+        $this->assertEquals(
+            $result,
+            $expected,
+            $description
+        );
+    }
+
+    public function getAvailabilityPickupWindowsProvider()
+    {
+        return array(
+            array(
+                'Morning',
+                // now Wed 10:20 CET
+                '2018-06-06T08:20:00+00:00',
+                // expected
+                array(
+                    array('start' => '2018-06-06T10:40:00+02:00', 'end' => '2018-06-06T18:00:00+02:00'),
+                    array('start' => '2018-06-07T09:00:00+02:00', 'end' => '2018-06-07T18:00:00+02:00'),
+                    array('start' => '2018-06-08T09:00:00+02:00', 'end' => '2018-06-08T18:00:00+02:00'),
+                ),
+            ),
+            array(
+                'Availability, late evening, pickup next opening hour + packing time',
+                // now Mon 21:23 CET
+                '2018-06-04T19:23:00+00:00',
+                // expected
+                array(
+                    // now closed
+                    array('start' => '2018-06-05T09:20:00+02:00', 'end' => '2018-06-05T18:00:00+02:00'), // +3
+                    array('start' => '2018-06-06T09:00:00+02:00', 'end' => '2018-06-06T18:00:00+02:00'),
+                    array('start' => '2018-06-07T09:00:00+02:00', 'end' => '2018-06-07T18:00:00+02:00'),
+                ),
+            ),
+            array(
+                'Availability - order on Tue morning, deliver during the day, pickup today, total 3 days',
+                // now Tue 11:00 CET
+                '2018-05-08T09:00:00+00:00',
+                // expected
+                array(
+                    array('start' => '2018-05-08T11:20:00+02:00', 'end' => '2018-05-08T18:00:00+02:00'), // Today
+                    array('start' => '2018-05-09T09:00:00+02:00', 'end' => '2018-05-09T18:00:00+02:00'), // total 3
+                    array('start' => '2018-05-10T09:00:00+02:00', 'end' => '2018-05-10T18:00:00+02:00'),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @param string $description
+     * @param string $now
      * @param array $methodInfo
      * @param array $expected
      *

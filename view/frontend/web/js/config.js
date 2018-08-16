@@ -11,6 +11,9 @@ define([
         METHOD_EXPRESS: 'express',
         METHOD_DELIVERY: 'delivery',
         COOKIE: 'porterbuddy_location',
+        SOURCE_BROWSER: 'browser',
+        SOURCE_IP: 'ip',
+        SOURCE_USER: 'user',
         cookieLifetime: 30,
 
         getCachedLocation: function () {

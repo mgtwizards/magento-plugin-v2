@@ -124,9 +124,14 @@ class Timeslots
         // add packing time to first window
         $addTime = $this->helper->getPackingTime() + $this->helper->getRefreshOptionsTimeout();
         /** @var \DateTime[] $window */
-        $window = reset($windows);
-        if ($window) {
+        foreach ($windows as $i => $window) {
+            // if window can't fit packing time (shop is about to close), remove it and find next
             $window['start']->modify("+$addTime minutes");
+            if ($window['start'] > $window['end']) {
+                unset($windows[$i]);
+                continue;
+            }
+            break;
         }
 
         // convert to API formst
@@ -137,7 +142,7 @@ class Timeslots
             ];
         }, $windows);
 
-        return $windows;
+        return array_values($windows);
     }
 
     /**
