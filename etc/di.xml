@@ -22,6 +22,16 @@
             </argument>
         </arguments>
     </type>
+    <type name="Porterbuddy\Porterbuddy\Model\Availability">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
+    <type name="Porterbuddy\Porterbuddy\Cron\UpdatePostcodes">
+        <arguments>
+            <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>
+        </arguments>
+    </type>
     <type name="Porterbuddy\Porterbuddy\Controller\Delivery\Location">
         <arguments>
             <argument name="logger" xsi:type="object">loggerPorterbuddy</argument>

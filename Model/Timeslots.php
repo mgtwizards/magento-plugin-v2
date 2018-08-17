@@ -6,6 +6,7 @@
 namespace Porterbuddy\Porterbuddy\Model;
 
 use Magento\Framework\DataObject;
+use Magento\Quote\Model\Quote\Address\RateRequest;
 use Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface;
 
 class Timeslots
@@ -90,11 +91,10 @@ class Timeslots
     /**
      * Generate pickup windows as large as possible over several days
      *
-     * @param \DateTime|null $deliveryDate
-     * @param int $extraWindows
+     * @param RateRequest $request optional
      * @return array
      */
-    public function getAvailabilityPickupWindows()
+    public function getAvailabilityPickupWindows(RateRequest $request = null)
     {
         // generate up to delivery date + extra windows
         $windows = [];
@@ -217,43 +217,6 @@ class Timeslots
         }, $windows);
 
         return array_values($windows);
-    }
-
-    /**
-     * Returns date for formula "Want it {date}? Order in the next {N} hours"
-     *
-     * @return \DateTime|false in *local* timezone for convenience
-     */
-    public function getAvailableUntil()
-    {
-        $date = $this->helper->getCurrentTime();
-
-        // protect against misconfiguration
-        for ($i = 0; $i < 10; $i++) {
-            $openHours = $this->getOpenHours($date);
-
-            if ($openHours) {
-                // Porterbuddy works until is set in local timezone
-                $porterbuddyWorksUntil = clone $openHours['close'];
-
-                $minutes = $this->helper->getPorterbuddyUntil(strtolower($date->format('D')));
-                $porterbuddyWorksUntil->modify("-{$minutes} minutes");
-
-                if ($date < $porterbuddyWorksUntil) {
-                    /** @var \DateTime $result */
-                    $result = $porterbuddyWorksUntil;
-                    $result->setTimezone($this->helper->getTimezone());
-                    return $result;
-                }
-            }
-
-            // for future days, we don't need specific opening hour, just make sure it's before closing hour
-            $date
-                ->modify('+1 day')
-                ->setTime(0, 0, 0);
-        }
-
-        return false;
     }
 
     /**

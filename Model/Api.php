@@ -5,6 +5,9 @@
  */
 namespace Porterbuddy\Porterbuddy\Model;
 
+use Porterbuddy\Porterbuddy\Exception;
+use Porterbuddy\Porterbuddy\Exception\ApiException;
+
 class Api
 {
     /**
@@ -37,14 +40,15 @@ class Api
      *
      * @param array $parameters
      * @return array
-     * @throws \Porterbuddy\Porterbuddy\Exception
+     * @throws Exception
+     * @throws ApiException
      * @throws \Exception
      */
     public function getAvailability(array $parameters)
     {
         $apiKey = $this->helper->getApiKey();
         if (!strlen($apiKey)) {
-            throw new \Porterbuddy\Porterbuddy\Exception(__('Porterbuddy API key must be configured.'));
+            throw new Exception(__('Porterbuddy API key must be configured.'));
         }
 
         $httpClient = $this->clientFactory->create();
@@ -56,18 +60,23 @@ class Api
             'parameters' => $parameters,
         ];
 
-        $httpClient->setHeaders([
+        $headers = [
             'x-api-key' => $apiKey,
             'Content-type' => 'application/json',
-        ]);
+        ];
+        $httpClient->setHeaders($headers);
         $httpClient->setTimeout($this->helper->getApiTimeout());
 
         try {
             $httpClient->post($uri, json_encode($parameters));
         } catch (\Exception $e) {
-            $this->logger->error('getAvailability error - ' . $e->getMessage(), $logData);
+            $this->logger->error(__FUNCTION__ . ' error - ' . $e->getMessage(), $logData);
             $this->logger->error($e);
-            throw $e;
+            throw new ApiException(
+                __('Connection error - %1', $e->getMessage()),
+                $logData,
+                $e
+            );
         }
 
         $logData['status'] = $httpClient->getStatus();
@@ -81,12 +90,12 @@ class Api
         }
 
         if (isset($data['deliveryWindows'])) {
-            $this->logger->debug('getAvailability success', $logData);
+            $this->logger->debug(__FUNCTION__ . ' success', $logData);
             return $data['deliveryWindows'];
         }
 
         $message = __('Get availability options error');
-        $this->logger->error('getAvailability error', $logData);
+        $this->logger->error(__FUNCTION__ . ' error', $logData);
 
         if (/*422 === $httpClient->getStatus() && */is_array($data)) {
             $errors = [];
@@ -98,7 +107,7 @@ class Api
             $message = __($message . ' - ' . implode(', ', $errors));
         }
 
-        throw new \Porterbuddy\Porterbuddy\Exception($message);
+        throw new ApiException($message);
     }
 
     /**
@@ -108,14 +117,14 @@ class Api
      * @param string $idempotencyKey optional
      * @return array
      * @throws \Zend_Http_Client_Exception
-     * @throws \Porterbuddy\Porterbuddy\Exception
-     * @throws \Porterbuddy\Porterbuddy\Exception\ApiException
+     * @throws Exception
+     * @throws ApiException
      */
     public function createOrder(array $parameters, $idempotencyKey = null)
     {
         $apiKey = $this->helper->getApiKey();
         if (!strlen($apiKey)) {
-            throw new \Porterbuddy\Porterbuddy\Exception(__('Porterbuddy API key must be configured.'));
+            throw new Exception(__('Porterbuddy API key must be configured.'));
         }
 
         $httpClient = $this->clientFactory->create();
@@ -141,9 +150,9 @@ class Api
         try {
             $httpClient->post($uri, json_encode($parameters));
         } catch (\Exception $e) {
-            $this->logger->error('createOrder error', $logData);
+            $this->logger->error(__FUNCTION__ . ' error - ' . $e->getMessage(), $logData);
             $this->logger->error($e);
-            throw new \Porterbuddy\Porterbuddy\Exception\ApiException(
+            throw new ApiException(
                 __('Connection error - %1', $e->getMessage()),
                 $logData,
                 $e
@@ -173,6 +182,76 @@ class Api
             $message = __($message . ' - ' . implode(', ', $errors));
         }
 
-        throw new \Porterbuddy\Porterbuddy\Exception\ApiException($message, $logData);
+        throw new ApiException($message, $logData);
+    }
+
+    /**
+     * Get all availability
+     *
+     * @param array $parameters
+     * @return array
+     * @throws \Zend_Http_Client_Exception
+     * @throws Exception
+     * @throws ApiException
+     */
+    public function getAllAvailability(array $parameters)
+    {
+        $apiKey = $this->helper->getApiKey();
+        if (!strlen($apiKey)) {
+            throw new Exception(__('Porterbuddy API key must be configured.'));
+        }
+
+        $httpClient = $this->clientFactory->create();
+        $uri = $this->helper->getApiUrl() . '/availability/all';
+
+        $logData = [
+            'api_url' => $uri,
+            'api_key' => $apiKey,
+            'parameters' => $parameters,
+        ];
+
+        $headers = [
+            'x-api-key' => $apiKey,
+            'Content-type' => 'application/json',
+        ];
+        $httpClient->setHeaders($headers);
+        $httpClient->setTimeout($this->helper->getApiTimeout());
+
+        try {
+            $httpClient->post($uri, json_encode($parameters));
+        } catch (\Exception $e) {
+            $this->logger->error(__FUNCTION__ . ' error - ' . $e->getMessage(), $logData);
+            $this->logger->error($e);
+            throw new ApiException(
+                __('Connection error - %1', $e->getMessage()),
+                $logData,
+                $e
+            );
+        }
+
+        $logData['status'] = $httpClient->getStatus();
+        $logData['response'] = $httpClient->getBody();
+
+        $data = json_decode($httpClient->getBody(), true);
+
+        if (!empty($data['postalCodeDeliveryWindows'])) {
+            $this->logger->notice(__FUNCTION__ . ' success', $logData);
+            return $data['postalCodeDeliveryWindows'];
+        }
+
+        $message = __('Get all postcodes error');
+        $this->logger->error(__FUNCTION__ . ' error', $logData, \Zend_Log::ERR);
+
+        if (/*422 === $httpClient->getStatus() && */is_array($data)) {
+            $errors = [];
+            foreach ($data as $error) {
+                if (isset($error['message'], $error['propertyPath'])) {
+                    $errors[] = __("%1 {$error['message']}", $error['propertyPath']);
+                }
+            }
+            $message = __($message . ' - ' . implode(', ', $errors));
+        }
+
+        throw new ApiException($message, $logData);
     }
 }

@@ -154,11 +154,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param string $websiteCode optional
      * @return bool
      */
-    public function getActive()
+    public function getActive($websiteCode = null)
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ACTIVE, ScopeInterface::SCOPE_WEBSITES);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ACTIVE, ScopeInterface::SCOPE_WEBSITES, $websiteCode);
     }
 
     /**
@@ -317,43 +318,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function ipDiscoveryEnabled()
     {
         return in_array('ip', $this->getLocationDiscovery());
-    }
-
-    /**
-     * @return array
-     */
-    public function getPostcodes()
-    {
-        $postcodes = $this->scopeConfig->getValue(self::XML_PATH_POSTCODES, ScopeInterface::SCOPE_STORE);
-        $postcodes = preg_split('/(\r\n|\n)/', $postcodes);
-        $postcodes = array_map(function ($row) {
-            // normalize format, remove leading 0, e.g. 0563 = 563
-            $row = trim($row);
-            $row = ltrim($row, '0');
-            return strlen($row) ? $row : false;
-        }, $postcodes);
-        $postcodes = array_filter($postcodes);
-
-        return $postcodes;
-    }
-
-    /**
-     * @param string $postcode
-     * @return bool
-     */
-    public function isPostcodeSupported($postcode)
-    {
-        $postcodes = $this->getPostcodes();
-        if (!$postcodes) {
-            // no restrictions
-            return true;
-        }
-
-        // normalize format, remove leading 0, e.g. 0563 = 563
-        $postcode = trim($postcode);
-        $postcode = ltrim($postcode, '0');
-
-        return in_array($postcode, $postcodes);
     }
 
     /**

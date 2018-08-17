@@ -10,6 +10,11 @@ use Magento\Framework\App\Action\Context;
 class Availability extends \Magento\Framework\App\Action\Action
 {
     /**
+     * @var \Porterbuddy\Porterbuddy\Model\Availability
+     */
+    protected $availability;
+
+    /**
      * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
@@ -25,11 +30,6 @@ class Availability extends \Magento\Framework\App\Action\Action
     protected $resultJsonFactory;
 
     /**
-     * @var \Porterbuddy\Porterbuddy\Model\Timeslots
-     */
-    protected $timeslots;
-
-    /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $productFactory;
@@ -38,20 +38,19 @@ class Availability extends \Magento\Framework\App\Action\Action
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
      * @param \Magento\Catalog\Model\ProductFactory $catalogProductFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \Porterbuddy\Porterbuddy\Model\Timeslots $timeslots
      * @param Context $context
      */
     public function __construct(
+        \Porterbuddy\Porterbuddy\Model\Availability $availability,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Porterbuddy\Porterbuddy\Model\Timeslots $timeslots,
         \Magento\Framework\App\Action\Context $context
     ) {
+        $this->availability = $availability;
         $this->helper = $helper;
         $this->productFactory = $catalogProductFactory;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->timeslots = $timeslots;
         parent::__construct($context);
     }
 
@@ -83,7 +82,7 @@ class Availability extends \Magento\Framework\App\Action\Action
             ]);
         }
 
-        if (!$this->helper->isPostcodeSupported($postcode)) {
+        if (!$this->availability->isPostcodeSupported($postcode)) {
             return $result->setData([
                 'error' => true,
                 'messages' => $this->helper->processPlaceholders(
@@ -119,7 +118,7 @@ class Availability extends \Magento\Framework\App\Action\Action
         }
 
         // check store working hours + Porterbuddy hours
-        $date = $this->timeslots->getAvailableUntil();
+        $date = $this->availability->getAvailableUntil();
         if (!$date) {
             return $result->setData([
                 'error' => true,
