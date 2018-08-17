@@ -79,10 +79,17 @@ define([
             this.$form = jQuery('#product_addtocart_form');
             this.$qty = this.$form.find('#qty');
 
+            var productId = this.options.productId;
+            if (!productId && this.$form.attr('action')) {
+                var match = this.$form.attr('action').match(/product\/(\d+)/);
+                if (match) {
+                    productId = match[1];
+                }
+            }
+
             // productId, qty, anything else
-            var match = this.$form.attr('action').match(/product\/(\d+)/);
             this.params = {
-                productId: this.options.productId || (match && match[1]),
+                productId: productId,
                 qty: this.$qty.val()
             };
 
@@ -364,6 +371,9 @@ define([
                 .done(function (result) {
                     if (result.postcode) {
                         // postcode, city, country
+                        delete result.error;
+                        delete result.message;
+                        result.source = Porterbuddy.SOURCE_IP;
                         dfd.resolve(result);
                     } else {
                         dfd.reject(result.message);
@@ -386,6 +396,7 @@ define([
                 .done(function (latlng) {
                     this.geocodeLocation({'location': latlng})
                         .done(function (location) {
+                            location.source = Porterbuddy.SOURCE_BROWSER;
                             dfd.resolve(location);
                         })
                         .fail(function (reason) {
@@ -411,6 +422,7 @@ define([
                 delete this.geocodeDfd[key];
             }.bind(this));
 
+            // TODO: move this check to loadMaps to run only once
             // detect maps auth failure (bad API key) and reject
             var origAuthFailure = window.gm_authFailure;
             window.gm_authFailure = function () {
@@ -534,7 +546,8 @@ define([
                     var location = {
                         postcode: postcode,
                         city: '',
-                        country: this.defaultCountry
+                        country: this.defaultCountry,
+                        source: Porterbuddy.SOURCE_USER
                     };
                     Porterbuddy.rememberLocation(location);
                     this.setCurrentLocation(location);

@@ -111,6 +111,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_ERROR_EMAIL_TEMPLATE = 'carriers/porterbuddy/error_email_template';
     const XML_PATH_ERROR_EMAIL_RECIPIENTS = 'carriers/porterbuddy/error_email_recipients';
     const XML_PATH_ERROR_EMAIL_RECIPIENTS_PORTERBUDDY = 'carriers/porterbuddy/error_email_recipients_porterbuddy';
+    const XML_PATH_ERROR_EMAIL_PORTERBUDDY = 'carriers/porterbuddy/error_email_porterbuddy';
 
     const XML_PATH_MAPS_API_KEY = 'carriers/porterbuddy/maps_api_key';
     const XML_PATH_DEBUG = 'carriers/porterbuddy/debug';
@@ -153,11 +154,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param string $websiteCode optional
      * @return bool
      */
-    public function getActive()
+    public function getActive($websiteCode = null)
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ACTIVE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ACTIVE, ScopeInterface::SCOPE_WEBSITES, $websiteCode);
     }
 
     /**
@@ -316,43 +318,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function ipDiscoveryEnabled()
     {
         return in_array('ip', $this->getLocationDiscovery());
-    }
-
-    /**
-     * @return array
-     */
-    public function getPostcodes()
-    {
-        $postcodes = $this->scopeConfig->getValue(self::XML_PATH_POSTCODES, ScopeInterface::SCOPE_STORE);
-        $postcodes = preg_split('/(\r\n|\n)/', $postcodes);
-        $postcodes = array_map(function ($row) {
-            // normalize format, remove leading 0, e.g. 0563 = 563
-            $row = trim($row);
-            $row = ltrim($row, '0');
-            return strlen($row) ? $row : false;
-        }, $postcodes);
-        $postcodes = array_filter($postcodes);
-
-        return $postcodes;
-    }
-
-    /**
-     * @param string $postcode
-     * @return bool
-     */
-    public function isPostcodeSupported($postcode)
-    {
-        $postcodes = $this->getPostcodes();
-        if (!$postcodes) {
-            // no restrictions
-            return true;
-        }
-
-        // normalize format, remove leading 0, e.g. 0563 = 563
-        $postcode = trim($postcode);
-        $postcode = ltrim($postcode, '0');
-
-        return in_array($postcode, $postcodes);
     }
 
     /**
@@ -902,6 +867,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
         return $emails;
+    }
+
+    /**
+     * Porterbuddy email that is always in the email list
+     *
+     * @return string
+     */
+    public function getErrorEmailPorterbuddy()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ERROR_EMAIL_PORTERBUDDY);
     }
 
     /**

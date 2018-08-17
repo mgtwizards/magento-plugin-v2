@@ -61,6 +61,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
     const COOKIE = 'porterbuddy_location';
 
+    const SOURCE_BROWSER = 'browser';
+    const SOURCE_IP = 'ip';
+    const SOURCE_USER = 'user';
+
     protected $_code = self::CODE;
 
     /**
@@ -223,6 +227,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      */
     public function collectRates(RateRequest $request)
     {
+        if (!$this->helper->getActive()) {
+            return false;
+        }
+
         /** @var Result $result */
         $result = $this->rateResultFactory->create();
 
@@ -541,7 +549,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         try {
             $parameters = $this->prepareCreateOrderData($request);
-            $orderDetails = $this->api->createOrder($parameters);
+            $idempotencyKey = $this->getShipmentIdempotencyKey($request);
+            $orderDetails = $this->api->createOrder($parameters, $idempotencyKey);
         } catch (\Porterbuddy\Porterbuddy\Exception $e) {
             $this->errorNotifier->notify($e, $shipment, $request);
             $shipment->setPorterbuddyErrorNotified(true);
@@ -603,6 +612,19 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @return string|null
+     */
+    public function getShipmentIdempotencyKey(\Magento\Shipping\Model\Shipment\Request $request)
+    {
+        $shipment = $request->getOrderShipment();
+        $order = $shipment->getOrder();
+
+        // TODO: for part shipping, include items
+        return $order->getIncrementId();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAllowedMethods()
@@ -622,7 +644,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         $params = [];
 
-        $params['pickupWindows'] = $this->getPickupWindows($request);
+        $params['pickupWindows'] = $this->timeslots->getAvailabilityPickupWindows($request);
 
         $originStreet1 = $this->_scopeConfig->getValue(Shipment::XML_PATH_STORE_ADDRESS1, ScopeInterface::SCOPE_STORE);
         $originStreet2 = $this->_scopeConfig->getValue(Shipment::XML_PATH_STORE_ADDRESS2, ScopeInterface::SCOPE_STORE);
@@ -664,39 +686,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $params = $transport->getData('params');
 
         return $params;
-    }
-
-    /**
-     * @param RateRequest $request
-     * @return array
-     * @throws PorterbuddyException
-     */
-    protected function getPickupWindows(RateRequest $request)
-    {
-        $result = [];
-        $daysAhead = $this->helper->getDaysAhead();
-
-        $date = new \DateTime('today 0:00', $this->helper->getTimezone());
-        for ($i = 0; $i < $daysAhead; $i++, $date->modify('+1 day')) {
-            $openHours = $this->timeslots->getOpenHours($date);
-            if (!$openHours) {
-                // holiday
-                continue;
-            }
-            $result[] = [
-                'start' => $this->helper->formatApiDateTime($openHours['open']),
-                'end' => $this->helper->formatApiDateTime($openHours['close']),
-            ];
-        }
-
-        if (!$result) {
-            $this->_logger->warning(
-                "prepareAvailabilityData - no pickup windows available in `$daysAhead` days ahead."
-            );
-            throw new PorterbuddyException(__("No pickup windows available in `%1` days ahead.", $daysAhead));
-        }
-
-        return $result;
     }
 
     /**

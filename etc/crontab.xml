@@ -11,5 +11,8 @@
         <job name="porterbuddy_send_shipments" instance="Porterbuddy\Porterbuddy\Cron\SendShipments" method="execute">
             <schedule>* * * * *</schedule>
         </job>
+        <job name="porterbuddy_update_postcodes" instance="Porterbuddy\Porterbuddy\Cron\UpdatePostcodes" method="execute">
+            <schedule>0 4 * * *</schedule>
+        </job>
     </group>
 </config>
