@@ -95,7 +95,6 @@ class Availability
         $this->timeslots = $timeslots;
     }
 
-
     /**
      * @return array
      */
