@@ -415,7 +415,7 @@ define([
             return {
                 form_key: this.formKey,
                 comment: this.comment(),
-                leave_at_doorstep: this.leaveDoorstep()
+                leave_doorstep: Number(this.leaveDoorstep())
             };
         }
     });

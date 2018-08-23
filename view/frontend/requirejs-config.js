@@ -21,6 +21,9 @@ var config = {
             },
             'Magento_Checkout/js/checkout-data': {
                 'Porterbuddy_Porterbuddy/js/checkout-data-mixin': true
+            },
+            'Porterbuddy_Porterbuddy/js/view/checkout': {
+                'Porterbuddy_Porterbuddy/js/view/checkout/klarna-mixin': true
             }
         }
     }

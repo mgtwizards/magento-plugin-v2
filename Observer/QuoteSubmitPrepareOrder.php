@@ -5,8 +5,22 @@
  */
 namespace Porterbuddy\Porterbuddy\Observer;
 
-class OrderCreateChangeShippingDescription implements \Magento\Framework\Event\ObserverInterface
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Model\Order;
+
+class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterface
 {
+    /**
+     * Set quote to order attributes
+     *
+     * @var array $attributes
+     */
+    protected $fields = [
+        'pb_leave_doorstep',
+        'pb_comment',
+        'pb_timeslot_selection',
+    ];
+
     /**
      * @var \Magento\Shipping\Model\CarrierFactory
      */
@@ -44,7 +58,9 @@ class OrderCreateChangeShippingDescription implements \Magento\Framework\Event\O
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        /** @var \Magento\Sales\Model\Order $order */
+        /** @var Quote $quote */
+        $quote = $observer->getQuote();
+        /** @var Order $order */
         $order = $observer->getOrder();
 
         $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
@@ -53,6 +69,16 @@ class OrderCreateChangeShippingDescription implements \Magento\Framework\Event\O
             return;
         }
 
+        $this->changeShippingDescription($order);
+        $this->copyFields($quote, $order);
+    }
+
+    /**
+     * @param Order $order
+     * @return void
+     */
+    protected function changeShippingDescription(Order $order)
+    {
         $methodInfo = $this->helper->parseMethod($order->getShippingMethod());
         if (!$methodInfo->getStart()) {
             return;
@@ -65,5 +91,19 @@ class OrderCreateChangeShippingDescription implements \Magento\Framework\Event\O
         $date = $this->localeDate->formatDate($start, \IntlDateFormatter::SHORT);
 
         $order->setShippingDescription($order->getShippingDescription() . " ($date)");
+    }
+
+    /**
+     * @param Quote $quote
+     * @param Order $order
+     * @return void
+     */
+    protected function copyFields(Quote $quote, Order $order)
+    {
+        foreach ($this->fields as $attribute) {
+            if ($quote->hasData($attribute)) {
+                $order->setData($attribute, $quote->getData($attribute));
+            }
+        }
     }
 }

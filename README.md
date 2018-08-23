@@ -13,6 +13,10 @@ Supported Magento versions:
 - 2.1
 - 2.0 (*-patch branch with system.xml compatibility fixes - don't use `canRestore` attribute)
 
+Klarna Checkout compatibility:
+- API v2
+- `klarna/m2-checkout` versions 3.0, 4.0, 5.0
+
 
 ## Installation with Composer
 
