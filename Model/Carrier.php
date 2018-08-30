@@ -9,6 +9,7 @@ use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\Format;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
@@ -22,6 +23,7 @@ use Magento\Shipping\Model\Rate\ResultFactory;
 use Magento\Store\Model\ScopeInterface;
 use Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface;
 use Porterbuddy\Porterbuddy\Exception as PorterbuddyException;
+use Porterbuddy\Porterbuddy\Exception;
 use Porterbuddy\Porterbuddy\Helper\Data;
 use Porterbuddy\Porterbuddy\Model\ErrorNotifier\NotifierInterface;
 use Psr\Log\LoggerInterface;
@@ -34,6 +36,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     const METHOD_EXPRESS_RETURN = 'express-with-return';
     const METHOD_DELIVERY = 'delivery';
     const METHOD_DELIVERY_RETURN = 'delivery-with-return';
+
+    const SHORTCUT_EXPRESS = 'x';
+    const SHORTCUT_EXPRESS_RETURN = 'xr';
+    const SHORTCUT_DELIVERY = 'd';
+    const SHORTCUT_DELIVERY_RETURN = 'dr';
 
     const MODE_PRODUCTION = 'production';
     const MODE_TESTING = 'testing';
@@ -285,19 +292,34 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         if ($expressOptions) {
             foreach ($expressOptions as $option) {
-                $result = $this->addRateResult($request, $option, $result);
+                try {
+                    $result = $this->addRateResult($request, $option, $result);
+                } catch (Exception $e) {
+                    $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
+                    $this->_logger->warning($e, $option);
+                }
             }
         }
 
         if ($this->helper->getShowTimeslots()) {
             foreach ($scheduledOptions as $option) {
-                $result = $this->addRateResult($request, $option, $result);
+                try {
+                    $result = $this->addRateResult($request, $option, $result);
+                } catch (Exception $e) {
+                    $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
+                    $this->_logger->warning($e, $option);
+                }
             }
         } else {
             // first scheduled option to get price
             $option = reset($scheduledOptions);
             if ($option) {
-                $result = $this->addDeliveryOnConfirmationResult($request, $option, $result);
+                try {
+                    $result = $this->addDeliveryOnConfirmationResult($request, $option, $result);
+                } catch (Exception $e) {
+                    $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
+                    $this->_logger->warning($e, $option);
+                }
             }
         }
 
@@ -314,7 +336,13 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         return $result;
     }
 
-
+    /**
+     * @param RateRequest $request
+     * @param array $option
+     * @param Result $result
+     * @return Result
+     * @throws Exception
+     */
     public function addDeliveryOnConfirmationResult(
         RateRequest $request,
         array $option,
@@ -327,7 +355,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $method->setCarrier(self::CODE);
         $method->setCarrierTitle($this->helper->getTitle());
 
-        $method->setMethod($option['product']); // no start-end dates
+        $methodCode = $this->helper->makeMethodCode($option, true);
+        $method->setMethod($methodCode); // no start-end dates
+
         $method->setMethodTitle(__('Select specific time after checkout')); // $this->helper->getScheduledName()
         //$method->setMethodDescription($this->helper->getScheduledDescription());
 
@@ -362,24 +392,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @param array $option
      * @param Result $result
      * @return Result
+     * @throws Exception
      */
     public function addRateResult(
         RateRequest $request,
         array $option,
         Result $result
     ) {
-        $type = $option['product'];
-        $start = new \DateTime($option['start']);
-        $end = new \DateTime($option['end']);
+        $methodCode = $this->helper->makeMethodCode($option);
 
-        $methodCode = implode(
-            '_',
-            [
-                $type,
-                $start->format(\DateTime::ATOM),
-                $end->format(\DateTime::ATOM)
-            ]
-        );
         // convert to standard interface
         $methodInfo = $this->helper->parseMethod($methodCode);
 
@@ -399,7 +420,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         if ($request->getFreeShipping() === true) {
             $shippingPrice = '0.00';
         } else {
-            switch ($type) {
+            switch ($methodInfo->getProduct()) {
                 case self::METHOD_EXPRESS:
                     $shippingPrice = $this->helper->getPriceOverrideExpress();
                     break;
@@ -630,8 +651,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     public function getAllowedMethods()
     {
         return [
-            self::METHOD_EXPRESS => __('Express'),
-            self::METHOD_DELIVERY => __('Delivery'),
+            self::SHORTCUT_EXPRESS => __('Express'),
+            self::SHORTCUT_DELIVERY => __('Delivery'),
         ];
     }
 

@@ -6,6 +6,7 @@
 namespace Porterbuddy\Porterbuddy\Helper;
 
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
 use Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface;
 use Porterbuddy\Porterbuddy\Exception;
@@ -1001,8 +1002,55 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Packs timeslot into Magento shipping method code
+     *
+     * Example: er_180830+02:00_1000_1200
+     * Express with return
+     * start 2018-08-30 10:00 +02:00
+     * end 2018-08-30 12:00 +02:00
+     *
+     * @param array $option
+     * @param bool $skipDate optional for selecting timeslot later in confirmation
+     * @return string
+     * @throws Exception
+     */
+    public function makeMethodCode(array $option, $skipDate = false)
+    {
+        switch ($option['product']) {
+            case Carrier::METHOD_EXPRESS:
+                $type = Carrier::SHORTCUT_EXPRESS;
+                break;
+            case Carrier::METHOD_DELIVERY:
+                $type = Carrier::SHORTCUT_DELIVERY;
+                break;
+            case Carrier::METHOD_EXPRESS_RETURN:
+                $type = Carrier::SHORTCUT_EXPRESS_RETURN;
+                break;
+            case Carrier::METHOD_DELIVERY_RETURN:
+                $type = Carrier::SHORTCUT_DELIVERY_RETURN;
+                break;
+            default:
+                throw new Exception(__('Unknown product `%1`.', $option['product']));
+        }
+
+        if ($skipDate) {
+            return $type;
+        }
+
+        $start = new \DateTime($option['start']);
+        $end = new \DateTime($option['end']);
+
+        $date = $start->format('ymdP');
+        $start = $start->format('Hi');
+        $end = $end->format('Hi');
+
+        return "{$type}_{$date}_{$start}_{$end}";
+    }
+
+    /**
      * @param string $methodCode
      * @return MethodInfoInterface
+     * @throws Exception
      */
     public function parseMethod($methodCode)
     {
@@ -1016,6 +1064,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $type = array_shift($parts);
         }
 
+        if (strlen($type) > 2) {
+            $this->parseLongFormat($result, $type, $parts);
+        } else {
+            $this->parseNewFormat($result, $type, $parts);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Parses deprecated longer format, up to 80 characters
+     *
+     * Example: express-with-return_2018-05-11T13:00:00+00:00_2018-05-11T15:00:00+00:00
+     *
+     * @param MethodInfoInterface $result
+     * @param string $type
+     * @param array $parts
+     */
+    protected function parseLongFormat(MethodInfoInterface $result, $type, array $parts)
+    {
         // product code as returned from API
         $result->setProduct($type);
 
@@ -1032,8 +1100,60 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $result->setStart(array_shift($parts));
             $result->setEnd(array_shift($parts));
         }
+    }
 
-        return $result;
+    /**
+     * Parses bew shorter format, fit 40 characters
+     *
+     * Example: er_180830+02:00_1000_1200
+     *
+     * @param MethodInfoInterface $result
+     * @param string $type
+     * @param array $parts
+     * @throws Exception
+     */
+    protected function parseNewFormat(MethodInfoInterface $result, $type, array $parts)
+    {
+        // d, x, dr, xr
+        switch ($type) {
+            case Carrier::SHORTCUT_DELIVERY:
+                $result->setProduct(Carrier::METHOD_DELIVERY);
+                $result->setType(Carrier::METHOD_DELIVERY);
+                $result->setReturn(false);
+                break;
+            case Carrier::SHORTCUT_DELIVERY_RETURN:
+                $result->setProduct(Carrier::METHOD_DELIVERY_RETURN);
+                $result->setType(Carrier::METHOD_DELIVERY);
+                $result->setReturn(true);
+                break;
+            case Carrier::SHORTCUT_EXPRESS:
+                $result->setProduct(Carrier::METHOD_EXPRESS);
+                $result->setType(Carrier::METHOD_EXPRESS);
+                $result->setReturn(false);
+                break;
+            case Carrier::SHORTCUT_EXPRESS_RETURN:
+                $result->setProduct(Carrier::METHOD_EXPRESS_RETURN);
+                $result->setType(Carrier::METHOD_EXPRESS);
+                $result->setReturn(true);
+                break;
+            default:
+                throw new Exception(__('Unknown method type `%1`.', $type));
+        }
+
+        if ($parts) {
+            $date = array_shift($parts);
+            $timeStart = array_shift($parts);
+            $timeEnd = array_shift($parts);
+
+            if ($date && $timeStart && $timeEnd) {
+                // 180830+02:00 1000
+                $start = \DateTime::createFromFormat('ymdP Hi', "$date $timeStart");
+                $end = \DateTime::createFromFormat('ymdP Hi', "$date $timeEnd");
+
+                $result->setStart($start->format(\DateTime::ATOM));
+                $result->setEnd($end->format(\DateTime::ATOM));
+            }
+        }
     }
 
     public function formatApiDateTime($dateTime)
@@ -1126,5 +1246,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $result;
+    }
+
+    /**
+     * Replaces characters with * keeping only initial and last few symbols
+     *
+     * Example: 1234******cdef
+     *
+     * @param string $value
+     * @param int $keepLength
+     * @return string
+     */
+    public function obscureValue($value, $keepLength = 4)
+    {
+        if (strlen($value) > $keepLength*2) {
+            $value = substr($value, 0, $keepLength)
+                . str_repeat('*', strlen($value)-2*$keepLength)
+                . substr($value, -$keepLength);
+        }
+
+        return $value;
     }
 }

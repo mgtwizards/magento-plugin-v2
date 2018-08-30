@@ -8,8 +8,6 @@ define([
 ], function ($) {
     return {
         CARRIER_CODE: 'porterbuddy',
-        METHOD_EXPRESS: 'express',
-        METHOD_DELIVERY: 'delivery',
         COOKIE: 'porterbuddy_location',
         SOURCE_BROWSER: 'browser',
         SOURCE_IP: 'ip',

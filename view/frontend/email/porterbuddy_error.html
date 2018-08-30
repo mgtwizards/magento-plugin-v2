@@ -13,6 +13,7 @@
 "var message": "Error Message",
 "var apiUrl": "API URL",
 "var apiKey": "API Key",
+"var idempotencyKey": "Idempotency Key",
 "var parameters_json|escape": "Request Parameters",
 "var status": "Response Status",
 "var response|escape": "Response"
@@ -39,6 +40,12 @@
             {{depend parameters}}
             <h2>{{trans "Data sent in the request to the Porterbuddy"}}:</h2>
             <pre><code>{{var parameters_json|escape}}</code></pre>
+
+            <table>
+                <tr><th>{{trans 'API URL'}}:</th><td>{{var apiUrl}}</td></tr>
+                <tr><th>{{trans 'API Key'}}:</th><td>{{var apiKey}}</td></tr>
+                <tr><th>{{trans 'Idempotency Key'}}:</th><td>{{var idempotencyKey}}</td></tr>
+            </table>
             {{/depend}}
 
             {{depend response}}
