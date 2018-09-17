@@ -6,6 +6,7 @@
 namespace Porterbuddy\Porterbuddy\Controller\Delivery;
 
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\DataObject;
 
 class Availability extends \Magento\Framework\App\Action\Action
 {
@@ -18,6 +19,11 @@ class Availability extends \Magento\Framework\App\Action\Action
      * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
+
+    /**
+     * @var \Magento\Framework\Event\ManagerInterface
+     */
+    protected $eventManager;
 
     /**
      * @var \Porterbuddy\Porterbuddy\Helper\Data
@@ -35,6 +41,8 @@ class Availability extends \Magento\Framework\App\Action\Action
     protected $productFactory;
 
     /**
+     * @param \Porterbuddy\Porterbuddy\Model\Availability $availability
+     * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
      * @param \Magento\Catalog\Model\ProductFactory $catalogProductFactory
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
@@ -42,12 +50,14 @@ class Availability extends \Magento\Framework\App\Action\Action
      */
     public function __construct(
         \Porterbuddy\Porterbuddy\Model\Availability $availability,
+        \Magento\Framework\Event\ManagerInterface $eventManager,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\App\Action\Context $context
     ) {
         $this->availability = $availability;
+        $this->eventManager = $eventManager;
         $this->helper = $helper;
         $this->productFactory = $catalogProductFactory;
         $this->resultJsonFactory = $resultJsonFactory;
@@ -68,6 +78,7 @@ class Availability extends \Magento\Framework\App\Action\Action
 
         $postcode = $this->getRequest()->getParam('postcode');
         $productId = $this->getRequest()->getParam('productId');
+        $qty = $this->getRequest()->getParam('qty');
 
         if (!$postcode) {
             return $result->setData([
@@ -139,6 +150,28 @@ class Availability extends \Magento\Framework\App\Action\Action
             $humanDate = mb_convert_case(__('Tomorrow'), MB_CASE_LOWER);
         } else {
             $humanDate = __($date->format('D'));
+        }
+
+        $result = new DataObject([
+            'available' => true,
+            'date' => $date,
+            'humanDate' => $humanDate,
+            'timeRemaining' => $timeRemaining,
+        ]);
+        $this->eventManager->dispatch('porterbuddy_availability', array(
+            'postcode' => $postcode,
+            'product' => $product,
+            'qty' => $qty,
+            'result' => $result,
+        ));
+
+        if ($result->getError()) {
+            return $result->setData([
+                'error' => true,
+                'messages' => $result->getMessage() ?: $this->helper->processPlaceholders(
+                    $this->helper->getAvailabilityTextOutOfStock()
+                )
+            ]);
         }
 
         return $result->setData([
