@@ -152,7 +152,7 @@ class Availability extends \Magento\Framework\App\Action\Action
             $humanDate = __($date->format('D'));
         }
 
-        $result = new DataObject([
+        $transport = new DataObject([
             'available' => true,
             'date' => $date,
             'humanDate' => $humanDate,
@@ -162,13 +162,13 @@ class Availability extends \Magento\Framework\App\Action\Action
             'postcode' => $postcode,
             'product' => $product,
             'qty' => $qty,
-            'result' => $result,
+            'result' => $transport,
         ));
 
-        if ($result->getError()) {
+        if ($transport->getError()) {
             return $result->setData([
                 'error' => true,
-                'messages' => $result->getMessage() ?: $this->helper->processPlaceholders(
+                'messages' => $transport->getMessage() ?: $this->helper->processPlaceholders(
                     $this->helper->getAvailabilityTextOutOfStock()
                 )
             ]);
