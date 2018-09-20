@@ -151,28 +151,34 @@ define([
             // swatches?
             if ('' === productId) {
                 // https://alanstorm.com/magento-2-extract-currently-selected-product-id/
-                var selected_options = {};
+                var selectedOptions = {};
                 $('div.swatch-attribute').each(function(k,v){
-                    var attribute_id    = $(v).attr('attribute-id');
-                    var option_selected = $(v).attr('option-selected');
-                    if (!attribute_id || !option_selected) {
+                    var attributeId    = $(v).attr('attribute-id');
+                    var optionSelected = $(v).attr('option-selected');
+                    if (!attributeId || !optionSelected) {
                         return null;
                     }
-                    selected_options[attribute_id] = option_selected;
+                    selectedOptions[attributeId] = optionSelected;
                 });
 
-                var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
-                var found_ids = [];
-                $.each(product_id_index, function (product_id,attributes) {
-                    var productIsSelected = function (attributes, selected_options) {
-                        return _.isEqual(attributes, selected_options);
-                    }
-                    if (productIsSelected(attributes, selected_options)) {
-                        found_ids.push(product_id);
+                var widgetRender = _.find($('[data-role=swatch-options]').data(), function (value, index) {
+                    // by default mageSwatchRenderer, but can be inherited and changed namespace, e.g. convertSwatchRenderer
+                    return index.match(/SwatchRenderer/);
+                });
+                if (!widgetRender) {
+                    // cannot find swatch widget instance
+                    return null;
+                }
+
+                var foundIds = [];
+                $.each(widgetRender.options.jsonConfig.index, function (productId, attributes) {
+                    if (_.isEqual(attributes, selectedOptions)) {
+                        foundIds.push(productId);
                     }
                 });
-                if (found_ids) {
-                    productId = found_ids[0];
+                // FIXME: intersect
+                if (foundIds) {
+                    productId = foundIds[0];
                 }
             }
 
