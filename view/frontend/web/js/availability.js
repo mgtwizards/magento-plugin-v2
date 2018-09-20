@@ -136,12 +136,47 @@ define([
             }
 
             $('.price-box').on('updatePrice', function () {
-                var productId = this.$selectedConfigurableOption.val();
+                var productId = this.getSelectedSimpleId();
                 if (productId && productId != this.params.productId) {
                     this.params.productId = productId;
                     this.update();
                 }
             }.bind(this));
+        },
+
+        getSelectedSimpleId: function () {
+            // regular configurable
+            var productId = this.$selectedConfigurableOption.val();
+
+            // swatches?
+            if ('' === productId) {
+                // https://alanstorm.com/magento-2-extract-currently-selected-product-id/
+                var selected_options = {};
+                $('div.swatch-attribute').each(function(k,v){
+                    var attribute_id    = $(v).attr('attribute-id');
+                    var option_selected = $(v).attr('option-selected');
+                    if (!attribute_id || !option_selected) {
+                        return null;
+                    }
+                    selected_options[attribute_id] = option_selected;
+                });
+
+                var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+                var found_ids = [];
+                $.each(product_id_index, function (product_id,attributes) {
+                    var productIsSelected = function (attributes, selected_options) {
+                        return _.isEqual(attributes, selected_options);
+                    }
+                    if (productIsSelected(attributes, selected_options)) {
+                        found_ids.push(product_id);
+                    }
+                });
+                if (found_ids) {
+                    productId = found_ids[0];
+                }
+            }
+
+            return productId;
         },
 
         /**
