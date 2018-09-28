@@ -97,11 +97,13 @@ class ShipmentSaveBeforeSendShipment implements \Magento\Framework\Event\Observe
     {
         /** @var \Magento\Sales\Model\Order\Shipment $shipment */
         $shipment = $observer->getShipment();
+        $order = $shipment->getOrder();
 
-        $carrier = $this->carrierFactory->create(
-            $shipment->getOrder()->getShippingMethod(true)->getCarrierCode()
-        );
+        if (!$order->getShippingMethod()) {
+            return;
+        }
 
+        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
         if (!$carrier instanceof Carrier) {
             return false;
         }

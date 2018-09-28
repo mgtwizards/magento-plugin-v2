@@ -76,8 +76,12 @@ class Options extends \Magento\Backend\App\Action
             return $resultRedirect->setRefererUrl();
         }
 
-        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
+        if (!$order->getShippingMethod()) {
+            $this->messageManager->addError(__('This is not a valid order.'));
+            return $resultRedirect->setRefererUrl();
+        }
 
+        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
         if (!$carrier instanceof \Porterbuddy\Porterbuddy\Model\Carrier) {
             $this->messageManager->addError(__('This is not a valid order.'));
             return $resultRedirect->setRefererUrl();

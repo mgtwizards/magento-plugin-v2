@@ -63,8 +63,11 @@ class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterf
         /** @var Order $order */
         $order = $observer->getOrder();
 
-        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
+        if (!$order->getShippingMethod()) {
+            return;
+        }
 
+        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
         if (!$carrier instanceof \Porterbuddy\Porterbuddy\Model\Carrier) {
             return;
         }

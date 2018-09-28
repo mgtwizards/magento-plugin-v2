@@ -63,8 +63,11 @@ class PaymentPlaceAfterCheckPaid implements \Magento\Framework\Event\ObserverInt
         $payment = $observer->getPayment();
         $order = $payment->getOrder();
 
-        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
+        if (!$order->getShippingMethod()) {
+            return false;
+        }
 
+        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
         if (!$carrier instanceof Carrier) {
             return false;
         }

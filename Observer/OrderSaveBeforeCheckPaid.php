@@ -62,8 +62,11 @@ class OrderSaveBeforeCheckPaid implements \Magento\Framework\Event\ObserverInter
         /** @var \Magento\Sales\Model\Order $order */
         $order = $observer->getOrder();
 
-        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
+        if (!$order->getShippingMethod()) {
+            return false;
+        }
 
+        $carrier = $this->carrierFactory->create($order->getShippingMethod(true)->getCarrierCode());
         if (!$carrier instanceof Carrier) {
             return false;
         }
