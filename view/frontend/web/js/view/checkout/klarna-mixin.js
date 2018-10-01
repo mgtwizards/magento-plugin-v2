@@ -13,8 +13,8 @@ define([
         // detect Klarna checkout and call kcoShippingMethod instead of regular selectShippingMethod
         return checkout.extend({
             selectShippingMethod: function (shippingMethod) {
-                var _super = this._super;
                 if (registry.has('checkout.steps.klarna_kco')) {
+                    var _super = this._super;
                     require(['Klarna_Kco/js/action/select-shipping-method'], function (kcoShippingMethod) {
                         kcoShippingMethod(shippingMethod);
                     }, function () {
@@ -22,7 +22,7 @@ define([
                         _super(shippingMethod);
                     });
                 } else {
-                    _super(shippingMethod);
+                    this._super(shippingMethod);
                 }
             }
         });
