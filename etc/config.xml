@@ -29,6 +29,7 @@
                 <availability_choose_popup_description>Delivery options and delivery speeds may vary for different locations</availability_choose_popup_description>
                 <availability_auto_update_composite>1</availability_auto_update_composite>
                 <days_ahead>1</days_ahead>
+                <preselect_location>1</preselect_location>
                 <timeslot_selection>checkout</timeslot_selection>
                 <pickup_windows_extra>3</pickup_windows_extra>
                 <timeslot_cutoff>1</timeslot_cutoff>
@@ -49,6 +50,7 @@
                 <return_text>I would like to return items that do not match me</return_text>
                 <return_short_text>+ included return</return_short_text>
                 <refresh_options_timeout>5</refresh_options_timeout>
+                <leave_doorstep_enabled>0</leave_doorstep_enabled>
                 <leave_doorstep_text>Allow the courier to leave the package outside the door</leave_doorstep_text>
                 <comment_text>Optional message to the courier</comment_text>
                 <discount_type>none</discount_type>

@@ -49,6 +49,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_DEFAULT_PHONE_CODE = 'carriers/porterbuddy/default_phone_code';
     const XML_PATH_PACKAGER_MODE = 'carriers/porterbuddy/packager_mode';
     const XML_PATH_PACKING_TIME = 'carriers/porterbuddy/packing_time';
+    const XML_PATH_PRESELECT_LOCATION = 'carriers/porterbuddy/preselect_location';
     const XML_PATH_RETURN_ENABLED = 'carriers/porterbuddy/return_enabled';
     const XML_PATH_TIMESLOT_SELECTION = 'carriers/porterbuddy/timeslot_selection';
     const XML_PATH_DAYS_AHEAD = 'carriers/porterbuddy/days_ahead';
@@ -95,6 +96,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_RETURN_TEXT = 'carriers/porterbuddy/return_text';
     const XML_PATH_RETURN_SHORT_TEXT = 'carriers/porterbuddy/return_short_text';
     const XML_PATH_REFRESH_OPTIONS_TIMEOUT = 'carriers/porterbuddy/refresh_options_timeout';
+    const XML_PATH_LEAVE_DOORSTEP_ENABLED = 'carriers/porterbuddy/leave_doorstep_enabled';
     const XML_PATH_LEAVE_DOORSTEP_TEXT = 'carriers/porterbuddy/leave_doorstep_text';
     const XML_PATH_COMMENT_TEXT = 'carriers/porterbuddy/comment_text';
     const XML_PATH_WEIGHT_UNIT = 'carriers/porterbuddy/weight_unit';
@@ -530,7 +532,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getIdCheckAttr()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ID_CHECK_ATTR, ScopeInterface::SCOPE_WEBSITES);
+        return $this->scopeConfig->getValue(self::XML_PATH_ID_CHECK_ATTR, ScopeInterface::SCOPE_WEBSITES);
     }
 
     /**
@@ -538,7 +540,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOnlyToRecipientAttr()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ONLY_RECIPIENT_ATTR, ScopeInterface::SCOPE_WEBSITES);
+        return $this->scopeConfig->getValue(self::XML_PATH_ONLY_RECIPIENT_ATTR, ScopeInterface::SCOPE_WEBSITES);
     }
 
     /**
@@ -756,12 +758,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getReturnEnabled()
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_RETURN_ENABLED, ScopeInterface::SCOPE_WEBSITES);
     }
+
+    /**
+     * @return bool
+     */
+    public function isPreselectLocation()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_PRESELECT_LOCATION, ScopeInterface::SCOPE_STORE);
+    }
+
 
     /**
      * @return string
@@ -793,6 +804,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @return bool
+     */
+    public function isLeaveDoorstepEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_LEAVE_DOORSTEP_ENABLED, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
      * @return string
      */
     public function getLeaveDoorstepText()
@@ -809,7 +828,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getErrorEmailEnabled($storeId = null)
     {

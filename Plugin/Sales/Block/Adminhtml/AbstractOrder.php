@@ -30,7 +30,7 @@ class AbstractOrder
         $markers = $this->getMarkers($block);
 
         if ($markers) {
-            $pos = 0;
+            $pos = -1;
             foreach ($markers as $marker) {
                 $pos = strpos($html, $marker, $pos+1);
                 if (false === $pos) {

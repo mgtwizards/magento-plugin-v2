@@ -47,6 +47,8 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
             'porterbuddy' => [
                 'title' => $this->helper->getTitle(),
                 'description' => $this->helper->getDescription(),
+                'preselectLocation' => $this->helper->isPreselectLocation(),
+                'leaveDoorstepEnabled' => $this->helper->isLeaveDoorstepEnabled(),
                 'leaveDoorstepText' => $this->helper->getLeaveDoorstepText(),
                 'returnEnabled' => $this->helper->getReturnEnabled(),
                 'returnText' => $this->helper->getReturnText(),

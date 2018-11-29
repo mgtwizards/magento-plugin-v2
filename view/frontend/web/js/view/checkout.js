@@ -39,6 +39,7 @@ define([
             template: 'Porterbuddy_Porterbuddy/checkout/widget',
             title: checkoutConfig.title,
             description: checkoutConfig.description,
+            leaveDoorstepEnabled: checkoutConfig.leaveDoorstepEnabled,
             leaveDoorstepText: checkoutConfig.leaveDoorstepText,
             showTimeslots: checkoutConfig.showTimeslots,
             returnEnabled: checkoutConfig.returnEnabled,

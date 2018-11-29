@@ -12,7 +12,13 @@ define([
 ], function ($, wrapper, Porterbuddy) {
     'use strict';
 
+    var checkoutConfig = window.checkoutConfig.porterbuddy;
+
     return function (checkoutData) {
+        if (!checkoutConfig.preselectLocation) {
+            return checkoutData;
+        }
+
         return $.extend(checkoutData, {
             getShippingAddressFromData: wrapper.wrap(checkoutData.getShippingAddressFromData, function (original) {
                 var formData = original();

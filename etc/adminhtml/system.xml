@@ -126,6 +126,10 @@
                     <label>Checkout Widget Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
+                <field id="preselect_location" translate="label" type="select" sortOrder="305" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Prefill location - postcode and city</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="timeslot_selection" translate="label" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Pick time slot</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Timeslot</source_model>
@@ -149,6 +153,10 @@
                 <field id="refresh_options_timeout" translate="label" type="text" sortOrder="370" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Refresh delivery options every, minutes</label>
                     <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="leave_doorstep_enabled" translate="label" type="select" sortOrder="375" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Show leave at doorstep section</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="leave_doorstep_text" translate="label" type="text" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Leave at doorstep checkbox text</label>
