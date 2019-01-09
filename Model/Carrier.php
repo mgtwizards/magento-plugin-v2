@@ -748,11 +748,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                     'city' => $request->getShipperAddressCity(),
                     'country' => $request->getShipperAddressCountryCode(),
                 ],
-                'email' => $this->_scopeConfig->getValue(
-                    'trans_email/ident_general/email',
-                    ScopeInterface::SCOPE_STORE,
-                    $shipment->getStoreId()
-                ),
+                'email' => $this->helper->getOrderEmailIdentity($shipment->getStoreId()),
                 'phoneCountryCode' => $pickupPhone[0] ?: $defaultPhoneCode,
                 'phoneNumber' => $pickupPhone[1],
                 'pickupWindows' => $this->timeslots->getPickupWindows($methodInfo),

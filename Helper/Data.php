@@ -109,6 +109,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_DEFAULT_PRODUCT_WIDTH = 'carriers/porterbuddy/default_product_width';
     const XML_PATH_DEFAULT_PRODUCT_LENGTH = 'carriers/porterbuddy/default_product_length';
 
+    const XML_PATH_ORDER_EMAIL_IDENTITY = 'carriers/porterbuddy/order_email_identity';
+
     const XML_PATH_ERROR_EMAIL_ENABLED = 'carriers/porterbuddy/error_email_enabled';
     const XML_PATH_ERROR_EMAIL_IDENTITY = 'carriers/porterbuddy/error_email_identity';
     const XML_PATH_ERROR_EMAIL_TEMPLATE = 'carriers/porterbuddy/error_email_template';
@@ -253,6 +255,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             default:
                 return $this->scopeConfig->getValue(self::XML_PATH_DEVELOPMENT_API_KEY, ScopeInterface::SCOPE_WEBSITES);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderEmailIdentity($storeId = null)
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ORDER_EMAIL_IDENTITY, ScopeInterface::SCOPE_WEBSITES, $storeId);
     }
 
     /**

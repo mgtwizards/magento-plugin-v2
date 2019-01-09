@@ -301,6 +301,10 @@
                     <label>Create shipment automatically</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="order_email_identity" translate="label" type="select" sortOrder="1220" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Email for Order Confirmation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
                 <field id="default_phone_code" translate="label comment" type="text" sortOrder="820" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Default Phone Code</label>
                     <comment>Added for phone numbers without phone code, e.g. "12 34 56 78" instead of "+47 12 34 56 78"</comment>
