@@ -102,7 +102,7 @@ class SendShipments
             ->setPageSize(1);
 
         if ($lastOrderId) {
-            $collection->addFieldtoFilter('order_id', ['gt' => $lastOrderId]);
+            $collection->addFieldtoFilter('main_table.entity_id', ['gt' => $lastOrderId]);
         }
 
         $collection->load();
