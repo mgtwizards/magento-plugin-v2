@@ -262,7 +262,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderEmailIdentity($storeId = null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_ORDER_EMAIL_IDENTITY, ScopeInterface::SCOPE_WEBSITES, $storeId);
+        return $this->scopeConfig->getValue(self::XML_PATH_ORDER_EMAIL_IDENTITY, ScopeInterface::SCOPE_STORES, $storeId);
     }
 
     /**
@@ -842,7 +842,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getErrorEmailEnabled($storeId = null)
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ERROR_EMAIL_ENABLED, ScopeInterface::SCOPE_WEBSITES, $storeId);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ERROR_EMAIL_ENABLED, ScopeInterface::SCOPE_STORES, $storeId);
     }
 
     /**
@@ -850,7 +850,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getErrorEmailIdentify($storeId = null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_ERROR_EMAIL_IDENTITY, ScopeInterface::SCOPE_WEBSITES, $storeId);
+        return $this->scopeConfig->getValue(self::XML_PATH_ERROR_EMAIL_IDENTITY, ScopeInterface::SCOPE_STORES, $storeId);
     }
 
     /**
@@ -858,7 +858,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getErrorEmailTemplate($storeId = null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_ERROR_EMAIL_TEMPLATE, ScopeInterface::SCOPE_WEBSITES, $storeId);
+        return $this->scopeConfig->getValue(self::XML_PATH_ERROR_EMAIL_TEMPLATE, ScopeInterface::SCOPE_STORES, $storeId);
     }
 
     /**
