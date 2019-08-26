@@ -16,6 +16,14 @@
                                             <item name="children" xsi:type="array">
                                                 <item name="shippingAddress" xsi:type="array">
                                                     <item name="children" xsi:type="array">
+                                                        <item name="before-shipping-method-form" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="porterbuddy-hide-rates-warning" xsi:type="array">
+                                                                    <item xsi:type="string" name="component">Porterbuddy_Porterbuddy/js/address-warning</item>
+                                                                    <item name="enabled" xsi:type="helper" helper="Porterbuddy\Porterbuddy\Helper\Data::getHideShippingOnEmptyAddress" />
+                                                                </item>
+                                                            </item>
+                                                        </item>
                                                         <item name="shippingAdditional" xsi:type="array">
                                                             <item name="component" xsi:type="string">uiComponent</item>
                                                             <item name="displayArea" xsi:type="string">shippingAdditional</item>

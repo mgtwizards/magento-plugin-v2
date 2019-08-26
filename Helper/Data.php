@@ -99,6 +99,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_LEAVE_DOORSTEP_ENABLED = 'carriers/porterbuddy/leave_doorstep_enabled';
     const XML_PATH_LEAVE_DOORSTEP_TEXT = 'carriers/porterbuddy/leave_doorstep_text';
     const XML_PATH_COMMENT_TEXT = 'carriers/porterbuddy/comment_text';
+    const XML_PATH_HIDE_SHIPPING_EMPTY_ADDRESS = 'carriers/porterbuddy/hide_shipping_empty_address';
     const XML_PATH_WEIGHT_UNIT = 'carriers/porterbuddy/weight_unit';
     const XML_PATH_DIMENSION_UNIT = 'carriers/porterbuddy/dimension_unit';
     const XML_PATH_DEFAULT_PRODUCT_WEIGHT = 'carriers/porterbuddy/default_product_weight';
@@ -835,6 +836,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCommentText()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_COMMENT_TEXT, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHideShippingOnEmptyAddress()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_HIDE_SHIPPING_EMPTY_ADDRESS, ScopeInterface::SCOPE_STORE);
     }
 
     /**

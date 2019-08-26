@@ -164,6 +164,10 @@
                 <field id="comment_text" translate="label" type="text" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Comment to courier text</label>
                 </field>
+                <field id="hide_shipping_empty_address" translate="label" type="select" sortOrder="395" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Hide shipping options until the address is entered</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
 
                 <field id="heading_price_override" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Prices Override</label>
