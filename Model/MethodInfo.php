@@ -19,6 +19,7 @@ class MethodInfo extends \Magento\Framework\DataObject
     const KEY_DATE_KEY = 'date_key';
     const KEY_DATE_LABEL = 'date_label';
     const KEY_LABEL = 'label';
+    const KEY_WINDOWS = 'windows';
     /**#@-*/
 
     /**
@@ -147,5 +148,21 @@ class MethodInfo extends \Magento\Framework\DataObject
     public function setLabel($timeslotLabel)
     {
         return $this->setData(self::KEY_LABEL, $timeslotLabel);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWindows()
+    {
+        return $this->getData(self::KEY_WINDOWS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWindows($windows)
+    {
+        return $this->setData(self::KEY_WINDOWS, $windows);
     }
 }

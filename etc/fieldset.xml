@@ -18,6 +18,9 @@
             <field name="pb_timeslot_selection">
                 <aspect name="to_order" />
             </field>
+            <field name="pb_token">
+                <aspect name="to_order" />
+            </field>
         </fieldset>
     </scope>
 </config>

@@ -9,21 +9,14 @@ $helper = $block->getHelper();
 ?>
 <script type="text/x-magento-init">
     {
-        "#porterbuddy-availability": {
+        "#porterbuddy-widget": {
             "porterbuddyAvailabilityWidget": {
-                "mapsApiKey": <?= json_encode($helper->getMapsApiKey()) ?>,
-                "getLocationURL": "<?= $block->getUrl('porterbuddy/delivery/location') ?>",
                 "getAvailabilityURL": "<?= $block->getUrl('porterbuddy/delivery/availability') ?>",
-                "isAlwaysShow": <?= json_encode($block->isAlwaysShow()) ?>,
-                "locationDiscovery": <?= json_encode($helper->getLocationDiscovery()) ?>,
-                "defaultCountry": <?= json_encode($block->getDefaultCountry()) ?>,
+                "availabilityText": <?= json_encode($helper->getAvailabilityTemplate()) ?>,
                 "textClickToSee": <?= json_encode($helper->getAvailabilityTextClickToSee()) ?>,
-                "textFetching": <?= json_encode($helper->processPlaceholders(
-                    $helper->getAvailabilityTextFetching()
-                )) ?>,
-                "textDeliveryUnavailable": <?= json_encode($helper->processPlaceholders(
-                    $helper->getAvailabilityTextPostcodeError()
-                )) ?>
+                "textDeliveryUnavailableTemplate": <?= json_encode($helper->getAvailabilityTextPostcodeError()) ?>,
+                "publicKey": <?= json_encode($helper->getPublicKey()) ?>,
+                "apiMode": "<?= $helper->getApiMode() ?>"
             }
         }
     }

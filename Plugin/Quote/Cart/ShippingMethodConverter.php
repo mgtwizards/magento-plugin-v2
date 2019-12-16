@@ -31,6 +31,10 @@ class ShippingMethodConverter
     protected $timeslots;
 
     /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $session;
+    /**
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
@@ -40,12 +44,14 @@ class ShippingMethodConverter
         \Magento\Framework\Api\ExtensionAttributesFactory $extensionAttributesFactory,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Porterbuddy\Porterbuddy\Model\Timeslots $timeslots
+        \Porterbuddy\Porterbuddy\Model\Timeslots $timeslots,
+        \Magento\Checkout\Model\Session $session
     ) {
         $this->extensionAttributesFactory = $extensionAttributesFactory;
         $this->helper = $helper;
         $this->localeDate = $localeDate;
         $this->timeslots = $timeslots;
+        $this->session = $session;
     }
 
     /**
@@ -84,25 +90,19 @@ class ShippingMethodConverter
 
             $label = $this->timeslots->formatTimeslot($methodInfo, false);
 
-            if ($this->helper->getShowTimeslots()) {
-                $dateKey = $startTime->format('Y-m-d');
-                $dateLabel = $this->localeDate->formatDate($startTime, \IntlDateFormatter::FULL);
-                $dateLabel = preg_replace('/\s+\d+$/', '', $dateLabel); // remove year
-                $dateLabel = rtrim($dateLabel, ', ');
-                if (Carrier::METHOD_EXPRESS == $methodInfo->getType()) {
-                    $label = $this->helper->getAsapName();
-                }
-            } else {
-                $dateKey = 'delivery-type';
-                $dateLabel = __('Select later');
-                if (Carrier::METHOD_DELIVERY == $methodInfo->getType()) {
-                    $label = $rateModel->getMethodTitle();
-                }
+            $dateKey = $startTime->format('Y-m-d');
+            $dateLabel = $this->localeDate->formatDate($startTime, \IntlDateFormatter::FULL);
+            $dateLabel = preg_replace('/\s+\d+$/', '', $dateLabel); // remove year
+            $dateLabel = rtrim($dateLabel, ', ');
+            if (Carrier::METHOD_EXPRESS == $methodInfo->getType()) {
+                $label = $this->helper->getAsapName();
             }
+
 
             $methodInfo->setDateKey($dateKey);
             $methodInfo->setDateLabel($dateLabel);
             $methodInfo->setLabel($label);
+            $methodInfo->setWindows(json_encode($this->session->getPbOptions()));
             $extensionAttributes->setPorterbuddyInfo($methodInfo);
         }
 

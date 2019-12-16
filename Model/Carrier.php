@@ -11,6 +11,8 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\Format;
+use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
+use Magento\InventorySalesApi\Api\IsProductSalableForRequestedQtyInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
@@ -44,8 +46,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     const SHORTCUT_DELIVERY_RETURN = 'dr';
 
     const MODE_PRODUCTION = 'production';
-    const MODE_TESTING = 'testing';
-    const MODE_DEVELOPMENT = 'development';
+    const MODE_TESTING = 'test';
 
     const WEIGHT_GRAM = 'GRAM';
     const WEIGHT_KILOGRAM = 'KILOGRAM';
@@ -53,19 +54,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     const UNIT_MILLIMETER = 'MILLIMETER';
     const UNIT_CENTIMETER = 'CENTIMETER';
 
-    const DISCOUNT_TYPE_NONE = 'none';
-    const DISCOUNT_TYPE_FIXED = 'fixed';
-    const DISCOUNT_TYPE_PERCENT = 'percent';
-
-    const TIMESLOT_CHECKOUT = 'checkout';
-    const TIMESLOT_CONFIRMATION = 'confirmation';
-
     const AVAILABILITY_HIDE = 'hide';
     const AVAILABILITY_ONLY_AVAILABLE = 'only_available';
     const AVAILABILITY_ALWAYS = 'always';
 
-    const LOCATION_BROWSER = 'browser';
-    const LOCATION_IP = 'ip';
 
     const COOKIE = 'porterbuddy_location';
 
@@ -126,6 +118,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $rateMethodFactory;
 
     /**
+     * @var \Magento\InventorySalesApi\Api\GetProductSalableQtyInterface
+     */
+    protected $getProductSalableQty;
+
+    /**
      * @var float
      */
     protected $baseCurrencyRate;
@@ -139,6 +136,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @var \Magento\Email\Model\Template\SenderResolver
      */
     protected $senderResolver;
+
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $session;
 
     public function __construct(
         Api $api,
@@ -155,7 +157,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ScopeConfigInterface $scopeConfig,
         SenderResolver $senderResolver,
         ErrorFactory $rateErrorFactory,
+        GetProductSalableQtyInterface $getProductSalableQty,
         LoggerInterface $logger,
+        \Magento\Checkout\Model\Session $session,
         array $data = []
     ) {
         $this->api = $api;
@@ -170,6 +174,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $this->packager = $packager;
         $this->timeslots = $timeslots;
         $this->senderResolver = $senderResolver;
+        $this->session = $session;
+        $this->getProductSalableQty = $getProductSalableQty;
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
@@ -254,7 +260,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             'request' => $request,
             'result' => $result,
         ]);
+
+        $discountAmount = $this->getDiscounts($request);
+
         if ($result->getError()) {
+            return $result;
+        }
+
+        if (!$request->getDestPostcode()){
+            //address not entered yet, so we can't help you
             return $result;
         }
 
@@ -262,15 +276,38 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         if (!$items) {
             return $result;
         }
+        foreach ($items as $item) {
+            $_product = $item->getProduct();
+            try {
+                $inventoryStock = $this->helper->getInventoryStock();
+
+                if($inventoryStock != null){
+                    $qtyInStock = $this->getProductSalableQty->execute($_product->getSku(), $inventoryStock);
+                    if($qtyInStock < $item->getQty()){
+                        return $result;
+                    }
+                }
+
+
+            }catch(\Exception $localizedException){
+                $this->_logger->debug($localizedException);
+                //probably means MSI not supported?
+            }
+            if (!$_product->isSaleable()) {
+                //item not in stock
+                return $result;
+            }
+
+        }
 
         /** @var \Magento\Quote\Model\Quote\Item $item */
         $item = reset($items);
         $quote = $item->getQuote();
-        $quote->setPbTimeslotSelection($this->helper->getTimeslotSelection());
 
         try {
             $parameters = $this->prepareAvailabilityData($request);
             $options = $this->api->getAvailability($parameters);
+
         } catch (\Porterbuddy\Porterbuddy\Exception $e) {
             // details logged
             return $result;
@@ -279,7 +316,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $this->_logger->error($e);
             return $result;
         }
-
+        $this->session->setPbOptions($options);
         $expressOptions = []; // no return + with return
         $scheduledOptions = [];
 
@@ -309,29 +346,33 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             }
         }
 
-        if ($this->helper->getShowTimeslots()) {
-            foreach ($scheduledOptions as $option) {
-                try {
-                    $result = $this->addRateResult($request, $option, $result);
-                } catch (Exception $e) {
-                    $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
-                    $this->_logger->warning($e, $option);
-                }
-            }
-        } else {
-            // first scheduled option to get price
-            $option = reset($scheduledOptions);
-            if ($option) {
-                try {
-                    $result = $this->addDeliveryOnConfirmationResult($request, $option, $result);
-                } catch (Exception $e) {
-                    $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
-                    $this->_logger->warning($e, $option);
-                }
+        foreach ($scheduledOptions as $option) {
+            try {
+
+                $result = $this->addRateResult($request, $option, $result);
+
+            } catch (Exception $e) {
+                $this->_logger->warning("Availability option error - {$e->getMessage()}.", $option);
+                $this->_logger->warning($e, $option);
             }
         }
 
-        $result = $this->applyDiscounts($request, $result);
+
+        $result = $this->applyDiscounts($discountAmount, $result);
+
+
+        $donorRate = $this->rateMethodFactory->create();
+
+        $donorRate->setCarrier(self::CODE);
+        $donorRate->setCarrierTitle($this->helper->getTitle());
+
+        $donorRate->setMethod("donor");
+        $donorRate->setMethodTitle("Porterbuddy");
+
+        $donorRate->setPrice(0);
+        $donorRate->setCost(0);
+
+        $result->append($donorRate);
 
         // enable to construct new result object
         $transport = new DataObject(['result' => $result]);
@@ -340,57 +381,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             'transport' => $transport,
         ]);
         $result = $transport->getData('result');
-
-        return $result;
-    }
-
-    /**
-     * @param RateRequest $request
-     * @param array $option
-     * @param Result $result
-     * @return Result
-     * @throws Exception
-     */
-    public function addDeliveryOnConfirmationResult(
-        RateRequest $request,
-        array $option,
-        Result $result
-    ) {
-        // Local timezone
-        /** @var Method $method */
-        $method = $this->rateMethodFactory->create();
-
-        $method->setCarrier(self::CODE);
-        $method->setCarrierTitle($this->helper->getTitle());
-
-        $methodCode = $this->helper->makeMethodCode($option, true);
-        $method->setMethod($methodCode); // no start-end dates
-
-        $method->setMethodTitle(__('Select specific time after checkout')); // $this->helper->getScheduledName()
-        //$method->setMethodDescription($this->helper->getScheduledDescription());
-
-        if ($request->getFreeShipping() === true) {
-            $shippingPrice = '0.00';
-        } else {
-            $shippingPrice = $this->helper->getPriceOverrideDelivery();
-
-            if (null === $shippingPrice
-                && isset($option['price']['fractionalDenomination'], $option['price']['currency'])
-            ) {
-                $apiPrice = $this->localeFormat->getNumber($option['price']['fractionalDenomination']) / 100;
-                $rate = $this->getBaseCurrencyRate($request, $option['price']['currency']);
-                $shippingPrice = $apiPrice * $rate;
-            }
-            if (null === $shippingPrice) {
-                $this->_logger->warning('Skip option with undefined price', ['option' => $option]);
-                return $result;
-            }
-        }
-
-        $method->setPrice($shippingPrice);
-        $method->setCost($shippingPrice);
-
-        $result->append($method);
 
         return $result;
     }
@@ -484,34 +474,58 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
-     * Applies discounts based on cart subtotal threshold
+     * Get discounts based on cart subtotal threshold
      *
      * @param RateRequest $request
-     * @param Result $result
-     * @return Result
+     * @return int
      */
-    public function applyDiscounts(
-        RateRequest $request,
-        Result $result
+    public function getDiscounts(
+        RateRequest $request
     ) {
-        $discountType = $this->helper->getDiscountType();
-        $discountSubtotal = $this->helper->getDiscountSubtotal();
 
         // known possible problem: $request->getBaseSubtotalInclTax can be empty in some cases, same problem with
         // free shipping. This is because shipping total collector is called before tax subtotal collector, and so
         // BaseSubtotalInclTax is not updated yet.
-        if ($request->getBaseSubtotalInclTax() < $discountSubtotal) {
-            // we need more gold
-            return $result;
+
+        $basketValue = $request->getBaseSubtotalInclTax();
+        if ($basketValue == 0 && $request->getPackageValueWithDiscount()>0) {
+            $basketValue = $request->getPackageValueWithDiscount() * 1.25;
         }
 
-        if (self::DISCOUNT_TYPE_FIXED === $discountType) {
-            $discountAmount = $this->helper->getDiscountAmount();
-            if ($discountAmount <= 0) {
-                $this->_logger->warning("Invalid discount amount `$discountAmount`.");
-                return $result;
-            }
+        $discounts = $this->helper->getDiscounts();
 
+        $discountAmount = 0;
+        $this->_logger->debug(json_encode($discounts));
+        foreach($discounts as $discount) {
+            $this->_logger->debug(json_encode($discounts));
+            $this->_logger->debug($basketValue);
+            if ((int)trim($discount['minimumbasket']) < $basketValue) {
+                //Basket is eligible
+                if ((int)trim($discount['discount']) > $discountAmount) {
+                    //best discount
+                    $discountAmount = (int)trim($discount['discount']);
+                }
+            }
+        }
+
+        $this->session->setPbDiscount($discountAmount);
+        $this->_logger->debug('pbdiscount' . $this->session->getPbDiscount());
+        return $discountAmount;
+    }
+
+    /**
+     * Applies discounts based on cart subtotal threshold
+     *
+     * @param $discountAmount
+     * @param Result $result
+     * @return Result
+     */
+    public function applyDiscounts(
+        $discountAmount,
+        Result $result
+    ) {
+
+        if($discountAmount > 0){
             foreach ($result->getAllRates() as $method) {
                 $price = $method->getPrice();
                 if ($price > 0) {
@@ -520,23 +534,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                     $method->setPrice(max($price, 0.00));
                 }
             }
-        } elseif (self::DISCOUNT_TYPE_PERCENT === $discountType) {
-            $discountPercent = $this->helper->getDiscountPercent();
-            if ($discountPercent <= 0 || $discountPercent > 100) {
-                $this->_logger->warning("Invalid discount percent `$discountPercent`.");
-                return $result;
-            }
-
-            foreach ($result->getAllRates() as $method) {
-                $price = $method->getPrice();
-                if ($price > 0) {
-                    $price -= $price * $discountPercent / 100;
-                    $price = max($price, 0.00);
-                    $method->setPrice($price);
-                }
-            }
         }
-
         return $result;
     }
 
@@ -599,7 +597,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             throw $e;
         }
 
-        // TODO: save order iframe URL for timeslot selection on confirmation page
 
         $comment = __('Porterbuddy shipment has been ordered.');
         if (!empty($orderDetails['deliveryReference'])) {
@@ -741,7 +738,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $pickupPhone = $this->helper->splitPhoneCodeNumber($request->getShipperContactPhoneNumber());
         $deliveryPhone = $this->helper->splitPhoneCodeNumber($request->getRecipientContactPhoneNumber());
 
-        $deliveryTimeslotIsKnown = ($methodInfo->getStart() && $methodInfo->getEnd());
 
         $senderlIdentity = $this->helper->getOrderEmailIdentity($shipment->getStoreId());
         $senderResult = $this->senderResolver->resolve($senderlIdentity,$shipment->getStoreId());
@@ -773,11 +769,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 'email' => $request->getRecipientEmail(),
                 'phoneCountryCode' => $deliveryPhone[0] ?: $defaultPhoneCode,
                 'phoneNumber' => $deliveryPhone[1],
-                'deliveryWindow' => $deliveryTimeslotIsKnown ? [
+                'deliveryWindow' => [
                     'start' => $this->helper->formatApiDateTime($methodInfo->getStart()),
                     'end' => $this->helper->formatApiDateTime($methodInfo->getEnd()),
-                ] : null,
-                'bestAvailableWindow' => !$deliveryTimeslotIsKnown,
+                    'token' => $order->getPbToken(),
+                ],
                 'verifications' => $this->getVerifications($shipment),
             ],
             'parcels' => $parcels,

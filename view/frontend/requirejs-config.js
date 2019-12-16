@@ -8,7 +8,10 @@ var config = {
             porterbuddyConfig: 'Porterbuddy_Porterbuddy/js/config',
             porterbuddyCheckoutWidget: 'Porterbuddy_Porterbuddy/js/view/checkout',
             porterbuddyRateFilter: 'Porterbuddy_Porterbuddy/js/model/rate-filter',
-            porterbuddyAvailabilityWidget: 'Porterbuddy_Porterbuddy/js/availability'
+            porterbuddyAvailabilityWidget: 'Porterbuddy_Porterbuddy/js/availability',
+            porterbuddyShippingModule: 'Porterbuddy_Porterbuddy/js/shipping',
+            porterbuddyShippingHelper: 'Porterbuddy_Porterbuddy/js/shipping_helper',
+            porterbuddyShippingKlarnaMobileWrapper: 'Porterbuddy_Porterbuddy/js/view/shipping-klarna-mobile-wrapper.js'
         }
     },
     config: {
@@ -22,8 +25,8 @@ var config = {
             'Magento_Checkout/js/checkout-data': {
                 'Porterbuddy_Porterbuddy/js/checkout-data-mixin': true
             },
-            'Porterbuddy_Porterbuddy/js/view/checkout': {
-                'Porterbuddy_Porterbuddy/js/view/checkout/klarna-mixin': true
+            'Klarna_Kco/js/view/shipping-method':{
+                'Porterbuddy_Porterbuddy/js/klarna-shipping-mixin': true
             }
         }
     }

@@ -11,10 +11,6 @@ class Mode implements \Magento\Framework\Option\ArrayInterface
     {
         $modes = [];
         $modes[] = [
-            'value' => \Porterbuddy\Porterbuddy\Model\Carrier::MODE_DEVELOPMENT,
-            'label' => __('Development'),
-        ];
-        $modes[] = [
             'value' => \Porterbuddy\Porterbuddy\Model\Carrier::MODE_TESTING,
             'label' => __('Testing'),
         ];
