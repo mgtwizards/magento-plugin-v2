@@ -4,8 +4,8 @@
         <css src="Porterbuddy_Porterbuddy::css/porterbuddy.css"/>
         <script async="async" type="text/js" src="https://widget.porterbuddy.com/porterbuddy-widget.js" src_type="url" />
         <css src="https://widget.porterbuddy.com/porterbuddy-widget.css" src_type="url" rel="stylesheet" type="text/css" />
-        <css src="https://widget.porterbuddy-test.com/porterbuddy-checkout.css" src_type="url" rel="stylesheet" type="text/css"/>
-        <script async="async" type="text/js" src="https://widget.porterbuddy-test.com/porterbuddy-checkout.js" src_type="url"/>
+        <css src="https://widget.porterbuddy.com/porterbuddy-checkout.css" src_type="url" rel="stylesheet" type="text/css"/>
+        <script async="async" type="text/js" src="https://widget.porterbuddy.com/porterbuddy-checkout.js" src_type="url"/>
     </head>
     <body>
         <referenceBlock name="checkout.root">

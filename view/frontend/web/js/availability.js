@@ -50,7 +50,10 @@ define([
                 productId: productId,
                 qty: this.$qty.val()
             };
-
+            
+            if(!this.params.qty || typeof this.params.qty != 'number' || this.params.qty < 1){
+                this.params.qty = 1;
+            }
             // deferred objects
             this.getAvailabilityDfd = {}; // by postcode and product id
         },

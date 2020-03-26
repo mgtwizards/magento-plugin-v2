@@ -306,7 +306,25 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         try {
             $parameters = $this->prepareAvailabilityData($request);
-            $options = $this->api->getAvailability($parameters);
+            $pbPreviousRequest = $this->session->getPbPreviousRequest();
+            $pbCurrentRequest = array('destinationAddress' => $parameters['destinationAddress'], 'parcels' => $parameters['parcels']);
+            $options = $this->session->getPbOptions();
+            $now = new \DateTime("now");
+
+            if(!$pbPreviousRequest || !$options || !$pbPreviousRequest['expiry'] || $pbPreviousRequest['expiry'] < $now || !$pbPreviousRequest['request'] || $pbPreviousRequest['request'] != $pbCurrentRequest ){
+
+                $options = $this->api->getAvailability($parameters);
+                $this->session->setPbOptions($options);
+                $refreshTime = new \DateTime("now");
+                $refreshTime->add(new \DateInterval('P0DT0H1M0S'));
+                if($options && $options[0]){
+                    $expirytime = new \DateTime($options[0]['expiresAt']);
+                    $refreshTime = $refreshTime > $expirytime?$expirytime:$refreshTime;
+                }
+                $pbPreviousRequest = array( 'request' => $pbCurrentRequest, 'expiry' => $refreshTime );
+                $this->session->setPbPreviousRequest($pbPreviousRequest);
+
+            }
 
         } catch (\Porterbuddy\Porterbuddy\Exception $e) {
             // details logged
@@ -316,7 +334,6 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $this->_logger->error($e);
             return $result;
         }
-        $this->session->setPbOptions($options);
         $expressOptions = []; // no return + with return
         $scheduledOptions = [];
 

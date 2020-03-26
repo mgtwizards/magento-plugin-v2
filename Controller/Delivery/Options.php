@@ -63,18 +63,30 @@ class Options extends \Magento\Framework\App\Action\Action
                 'message' => __('Method not allowed'),
             ]);
         }
+        if (!$this->formKeyValidator->validate($this->getRequest())) {
+            return $result->setData([
+                'errors' => true,
+                'message' => __('Invalid Form Key. Please refresh the page.'),
+            ]);
+        }
 
+        $resultData = [];
         $type = $this->getRequest()->getPost('type');
         $quote = $this->session->getQuote();
         if($type == 'comment'){
-
+            $resultData['type'] = 'comment';
             $comment = $this->getRequest()->getPost('comment');
+            $resultData['value'] = $comment;
+
             $quote->setPbComment($comment);
         }elseif($type == 'doorstep'){
+            $resultData['type'] = 'doorstep';
             $doorstep =  $this->getRequest()->getPost('leave_doorstep');
             if($doorstep == 'true'){
+                $resultData['value'] = 'true';
                 $quote->setPbLeaveDoorstep(1);
             }else{
+                $resultData['value'] = 'false';
                 $quote->setPbLeaveDoorstep(0);
             }
         }
@@ -92,7 +104,9 @@ class Options extends \Magento\Framework\App\Action\Action
                 'message' => __('An error occurred when updating cart'),
             ]);
         }
-
-        return $result->setData(['errors' => false]);
+        $resultData['setDoorstep'] = $quote->getPbLeaveDoorsep();
+        $resultData['comment'] = $quote->getPbComment();
+        $resultData['errors'] = false;
+        return $result->setData($resultData);
     }
 }

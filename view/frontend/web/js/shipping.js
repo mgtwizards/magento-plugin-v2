@@ -182,14 +182,15 @@ define([
                             optionId: "porterbuddy",
                             propertyPath: "data.leaveAtDoorstep",
                             onChange: function (value) {
-                                storage.post(
-                                    mageUrl.build('porterbuddy/delivery/options'),
-                                    JSON.stringify({
+                                $.ajax({
+                                    type: 'POST',
+                                    url: mageUrl.build('porterbuddy/delivery/options'),
+                                    data: {
                                         leave_doorstep: value,
-                                        type: 'doorstep'
-                                    }),
-                                    true
-                                ).done(function (data) {
+                                        type: 'doorstep',
+                                        form_key: $.mage.cookies.get('form_key'),
+                                    }
+                                }).done(function (data) {
                                     if (data.error) {
                                         console.error(data.message);
                                     }
@@ -202,14 +203,15 @@ define([
                             optionId: "porterbuddy",
                             propertyPath: "data.comment",
                             onChange: function (value) {
-                                storage.post(
-                                    mageUrl.build('porterbuddy/delivery/options'),
-                                    JSON.stringify({
+                                $.ajax({
+                                    type: 'POST',
+                                    url: mageUrl.build('porterbuddy/delivery/options'),
+                                    data: {
                                         comment: value,
-                                        type: 'comment'
-                                    }),
-                                    true
-                                ).done(function (data) {
+                                        type: 'comment',
+                                        form_key: $.mage.cookies.get('form_key'),
+                                    }
+                                }).done(function (data) {
                                     if (data.error) {
                                         console.error(data.message);
                                     }
@@ -274,12 +276,13 @@ define([
                         quote.shippingAddress.valueHasMutated();
                         pbRateFilter.getRateCacheDisabled()(false);
                     }
-                    callback({deliveryWindows:data.timeslots, discount: this.pbDiscount});
+                    callback({deliveryWindows:data.timeslots, discount: window.checkoutConfig.porterbuddy.discount * 100});
                 }
             });
         },
 
         setPostcode: function(postCode){
+            console.log("inside setPostcode");
             var address = quote.shippingAddress();
             if(!address) {
                 address = {};
