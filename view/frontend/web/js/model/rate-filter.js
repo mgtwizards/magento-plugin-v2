@@ -10,6 +10,7 @@ define([
 ], function (ko, _, Porterbuddy, pbShippingHelper) {
     var rateCacheDisabled = ko.observable(false);
     var groupedRates = ko.observableArray();
+    var otherRates = ko.observableArray();
 
     return {
         extractRates: function (ratesData) {
@@ -20,10 +21,17 @@ define([
                 return 'other';
             });
             groupedRates(result);
+            if(result.other) {
+                otherRates(result.other);
+            }
         },
 
         getGroupedRates: function(){
             return groupedRates;
+        },
+
+        getOtherRates: function(){
+            return otherRates;
         },
 
         getRateCacheDisabled: function () {

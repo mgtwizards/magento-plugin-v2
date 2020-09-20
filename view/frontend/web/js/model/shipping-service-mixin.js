@@ -22,6 +22,8 @@ define([
                 // run original checkout-data-resolver.resolveShippingRates to check selected shipping method
                 original(ratesData);
 
+                // hide Porterbuddy from visible rates list
+                rates(rateFilter.getOtherRates()());
             })
         });
     };

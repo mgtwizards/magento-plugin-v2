@@ -37,7 +37,7 @@ define([
 
     return Component.extend({
         defaults: {
-           // template: 'Porterbuddy_Porterbuddy/checkout/widget',
+            template: 'Porterbuddy_Porterbuddy/checkout/widget',
             title: checkoutConfig.title,
             description: checkoutConfig.description,
             leaveDoorstepEnabled: checkoutConfig.leaveDoorstepEnabled,
@@ -72,7 +72,7 @@ define([
             this._super();
             window.pbHasWindows = ko.observable(false);
 
-            rateFilter.getPorterbuddyRates().subscribe(function (rates) {
+            rateFilter.getGroupedRates().subscribe(function (rates) {
                 this.processNewRates(rates);
 
                 if(window.updateDeliveryWindows) {
@@ -212,11 +212,11 @@ define([
         },
 
         processNewRates: function (rates) {
-            if (!rates.length) {
+            if (!rates.porterbuddy || !rates.porterbuddy.length) {
                 this.visible(false);
                 return;
             }
-            this.deliveryWindows = JSON.parse(rates[0].extension_attributes.porterbuddy_info.windows);
+            this.deliveryWindows = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
             if(!window.porterbuddy){
                 this.initWidget();
             }
@@ -224,7 +224,7 @@ define([
 
             this.timeslotsByValue = {};
 
-            _.each(rates, function (rate) {
+            _.each(rates.porterbuddy, function (rate) {
                 var code = rate.carrier_code + '_' + rate.method_code;
                 var timeslot = _.extend({}, rate.extension_attributes.porterbuddy_info, {
                     value: code,
