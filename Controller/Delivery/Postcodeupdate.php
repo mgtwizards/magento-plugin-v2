@@ -5,104 +5,109 @@
  */
 namespace Porterbuddy\Porterbuddy\Controller\Delivery;
 
-
-
-use Klarna\Kco\Model\Api\Builder\Kasper;
-use Klarna\Kco\Model\Api\Rest\Service\Checkout;
+use Porterbuddy\Porterbuddy\Model\Klarna\AddressUpdateInstance as AddressUpdate;
+use Porterbuddy\Porterbuddy\Model\Klarna\KasperInstance as Kasper;
+use Porterbuddy\Porterbuddy\Model\Klarna\CheckoutInstance as Checkout;
+use Porterbuddy\Porterbuddy\Model\Klarna\AddressInstance as Address;
+use Porterbuddy\Porterbuddy\Model\Klarna\SessionInstance as KlarnaSession;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Quote\Model\Quote\Address as QuoteAddress;
+use Magento\Quote\Model\Quote\AddressFactory;
+use Magento\Quote\Model\QuoteRepository;
 
-class Postcodeupdate extends \Magento\Framework\App\Action\Action
+class Postcodeupdate extends Action
 {
     /**
-     * @var \Magento\Framework\Data\Form\FormKey\Validator
+     * @var Validator
      */
     protected $formKeyValidator;
-
     /**
-     * @var \Magento\Framework\Controller\Result\JsonFactory
+     * @var JsonFactory
      */
     protected $resultJsonFactory;
-
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var KlarnaSession
      */
     protected $session;
     /**
-     * @var \Magento\Quote\Model\QuoteRepository
+     * @var QuoteRepository
      */
     protected $quoteRepository;
-
     /**
-     * @var \Klarna\Kco\Controller\Api\AddressUpdate
+     * @var AddressUpdate
      */
     protected $addressUpdate;
-
     /**
-     * @var \Magento\Quote\Model\Quote\AddressFactory
+     * @var AddressFactory
      */
     protected $quoteAddressFactory;
-
     /**
-     * @var \Klarna\Kco\Model\Checkout\Kco\Address
+     * @var Address
      */
     protected $kcoAddress;
-
     /**
-     * @var \Magento\Framework\DataObjectFactory
+     * @var DataObjectFactory
      */
     protected $objectFactory;
-
-protected $kasper;
-protected $checkout;
+    /**
+     * @var Kasper
+     */
+    protected $kasper;
+    /**
+     * @var Checkout
+     */
+    protected $checkout;
 
     /**
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator
-     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \Klarna\Kco\Model\Checkout\Kco\Session $session
-     * @param \Magento\Quote\Model\QuoteRepository $quoteRepository
-     * @param \Klarna\Kco\Controller\Api\AddressUpdate $addressUpdate
-     * @param \Klarna\Kco\Model\Checkout\Kco\Address $address
-     * @param \Magento\Quote\Model\Quote\AddressFactory $quoteAddressFactory
+     * @param Context $context
+     * @param Validator $formKeyValidator
+     * @param JsonFactory $resultJsonFactory
+     * @param KlarnaSession $session
+     * @param QuoteRepository $quoteRepository
+     * @param AddressUpdate $addressUpdate
+     * @param Address $address
+     * @param AddressFactory $quoteAddressFactory
      * @param DataObjectFactory $objectFactory
      * @param Kasper $kasper
      * @param Checkout $checkout
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Klarna\Kco\Model\Checkout\Kco\Session $session,
-        \Magento\Quote\Model\QuoteRepository $quoteRepository,
-        \Klarna\Kco\Controller\Api\AddressUpdate $addressUpdate,
-        \Klarna\Kco\Model\Checkout\Kco\Address $address,
-        \Magento\Quote\Model\Quote\AddressFactory $quoteAddressFactory,
+        Context $context,
+        Validator $formKeyValidator,
+        JsonFactory $resultJsonFactory,
+        KlarnaSession $session,
+        QuoteRepository $quoteRepository,
+        AddressUpdate $addressUpdate,
+        Address $address,
+        AddressFactory $quoteAddressFactory,
         DataObjectFactory $objectFactory,
-    Kasper $kasper,
+        Kasper $kasper,
         Checkout $checkout
-
     ) {
         $this->formKeyValidator = $formKeyValidator;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->session = $session;
         $this->quoteRepository = $quoteRepository;
-        $this->addressUpdate = $addressUpdate;
-        $this->kcoAddress = $address;
         $this->objectFactory = $objectFactory;
-        $this->kasper = $kasper;
-        $this->checkout = $checkout;
+        $this->kasper = $kasper->get();
+        $this->checkout = $checkout->get();
+        $this->kcoAddress = $address->get();
+        $this->session = $session->get();
+        $this->addressUpdate = $addressUpdate->get();
         $this->quoteAddressFactory = $quoteAddressFactory;
         parent::__construct($context);
     }
 
     /**
-     * @return \Magento\Framework\Controller\Result\Json
+     * @return Json
      */
     public function execute()
     {
-        /** @var \Magento\Framework\Controller\Result\Json $result */
+        /** @var Json $result */
         $result = $this->resultJsonFactory->create();
 
         if (!$this->getRequest()->isPost()) {
@@ -140,15 +145,6 @@ protected $checkout;
             $klarnaResult = $this->checkout->updateOrder($klarnaQuote->getKlarnaCheckoutId(), $reqData);
             return $result->setData(['errors' => false, 'message' => json_encode($klarnaResult)]);
 
-            // $shippingAddress = $this->objectFactory->create(['data' => [ $quote->getShippingAddress()->getPostcode()]]);
-
-       // $shippingAddress->setPostalCode($postcode);
-       // $shippingAddress->setCountryCode('NO');
-        //$this->kcoAddress->updateCheckoutAddress($shippingAddress);
-            return $result->setData(['errors' => false, 'message' => $quote->getKlarnaCheckoutId()]);
-
-
-            $this->quoteRepository->save($quote);
         } catch (LocalizedException $e) {
             return $result->setData([
                 'errors' => true,
@@ -157,12 +153,9 @@ protected $checkout;
         } catch (\Exception $e) {
             return $result->setData([
                 'errors' => true,
-       //         'message' => __('An error occurred when updating cart'),
                 'message' => $e->getMessage() . $e->getTraceAsString(),
 
             ]);
         }
-
-        return $result->setData(['errors' => false]);
     }
 }
