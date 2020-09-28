@@ -9,8 +9,8 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\DataObject;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
-use Magento\InventorySalesApi\Api\IsProductSalableInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\GetProductSalableQtyInstance as GetProductSalableQtyInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\IsProductSalableInstance as IsProductSalableInterface;
 
 class Availability extends \Magento\Framework\App\Action\Action
 {
@@ -71,8 +71,8 @@ class Availability extends \Magento\Framework\App\Action\Action
         $this->helper = $helper;
         $this->productFactory = $catalogProductFactory;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->getProductSalableQty = $getProductSalableQty;
-        $this->isProductSalable = $isProductSalable;
+        $this->getProductSalableQty = $getProductSalableQty->get();
+        $this->isProductSalable = $isProductSalable->get();
         parent::__construct($context);
     }
 
@@ -127,7 +127,7 @@ class Availability extends \Magento\Framework\App\Action\Action
         }
 
         $messages = "";
-        try {
+        if ($this->getProductSalableQty && $this->isProductSalable) {
             if ($this->helper->getInventoryStock() != null) {
                 if($product->getTypeId() == 'simple') {
                     $qtyInStock = $this->getProductSalableQty->execute($product->getSku(), $this->helper->getInventoryStock());
@@ -156,7 +156,7 @@ class Availability extends \Magento\Framework\App\Action\Action
             } else {
                 $messages = "inventory stock null";
             }
-        } catch (LocalizedException $e) {
+        } else {
             $messages = $e->getLogMessage() . " " . $product->getSku() . " " . $product->getTypeId();
             //probably just means MSI not supported here.
         }

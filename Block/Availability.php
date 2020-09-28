@@ -7,8 +7,8 @@ namespace Porterbuddy\Porterbuddy\Block;
 
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
-use Magento\InventorySalesApi\Api\IsProductSalableInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\GetProductSalableQtyInstance as GetProductSalableQtyInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\IsProductSalableInstance as IsProductSalableInterface;
 use Porterbuddy\Porterbuddy\Model\Carrier;
 
 class Availability extends \Magento\Framework\View\Element\Template
@@ -53,8 +53,8 @@ class Availability extends \Magento\Framework\View\Element\Template
         $this->directoryHelper = $directoryHelper;
         $this->helper = $helper;
         $this->registry = $registry;
-        $this->getProductSalableQty = $getProductSalableQty;
-        $this->isProductSalable = $isProductSalable;
+        $this->getProductSalableQty = $getProductSalableQty->get();
+        $this->isProductSalable = $isProductSalable->get();
         parent::__construct($context, $data);
     }
 
@@ -104,9 +104,9 @@ class Availability extends \Magento\Framework\View\Element\Template
         }
         $product = $this->getProduct();
 
-        try {
+        if ($this->getProductSalableQty && $this->isProductSalable) {
             if ($this->helper->getInventoryStock() != null) {
-                if ($product->getTypeId() == 'simple') {
+                if ($product->getTypeId() === 'simple') {
                     $qtyInStock = $this->getProductSalableQty->execute($product->getSku(), $this->helper->getInventoryStock());
                     if (1 > $qtyInStock) {
                         return '';
@@ -117,11 +117,10 @@ class Availability extends \Magento\Framework\View\Element\Template
                     }
                 }
             }
-         } catch (LocalizedException $e) {
-            //probably just means MSI not supported here.
         }
+
         if (!$product->isSalable() || $product->isVirtual()) {
-            return '';
+            return parent::_toHtml();
         }
 
         return parent::_toHtml();

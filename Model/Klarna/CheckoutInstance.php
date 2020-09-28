@@ -5,6 +5,7 @@
  */
 namespace Porterbuddy\Porterbuddy\Model\Klarna;
 
+use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -19,13 +20,21 @@ class CheckoutInstance
     private $objectManager;
 
     /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    /**
      * KasperFactory constructor.
      *
+     * @param Manager $moduleManager
      * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
+        Manager $moduleManager,
         ObjectManagerInterface $objectManager
     ) {
+        $this->moduleManager = $moduleManager;
         $this->objectManager = $objectManager;
     }
 
@@ -35,8 +44,8 @@ class CheckoutInstance
     public function get()
     {
         $instanceName = \Klarna\Kco\Model\Api\Rest\Service\Checkout::class;
-        if (class_exists($instanceName)) {
-            return $this->objectManager->get($instanceName);
+        if ($this->moduleManager->isEnabled('Klarna_Kco') && class_exists($instanceName)) {
+                return $this->objectManager->get($instanceName);
         }
         return null;
     }
