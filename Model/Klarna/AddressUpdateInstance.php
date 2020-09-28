@@ -5,6 +5,7 @@
  */
 namespace Porterbuddy\Porterbuddy\Model\Klarna;
 
+use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -19,13 +20,21 @@ class AddressUpdateInstance
     private $objectManager;
 
     /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    /**
      * KasperFactory constructor.
      *
+     * @param Manager $moduleManager
      * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
+        Manager $moduleManager,
         ObjectManagerInterface $objectManager
     ) {
+        $this->moduleManager = $moduleManager;
         $this->objectManager = $objectManager;
     }
 
@@ -35,9 +44,10 @@ class AddressUpdateInstance
     public function get()
     {
         $instanceName = Klarna\Kco\Controller\Api\AddressUpdate::class;
-        if (class_exists($instanceName)) {
+        if ($this->moduleManager->isEnabled('Klarna_Kco') && class_exists($instanceName)) {
             return $this->objectManager->get($instanceName);
         }
+
         return null;
     }
 }

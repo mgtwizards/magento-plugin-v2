@@ -3,16 +3,16 @@
  * @author Convert Team
  * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
  */
-namespace Porterbuddy\Porterbuddy\Model\Klarna;
+namespace Porterbuddy\Porterbuddy\Model\InventoryApi;
 
-use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Module\Manager;
 
 /**
  * Class KasperFactory
  * @package Model\Klarna
  */
-class KasperInstance
+class GetProductSalableQtyInstance
 {
     /**
      * @var ObjectManagerInterface
@@ -39,14 +39,16 @@ class KasperInstance
     }
 
     /**
-     * @return \Klarna\Kco\Model\Api\Builder\Kasper|null
+     * @return \Magento\InventoryApi\Api\GetProductSalableQtyInterface|null
      */
     public function get()
     {
-        $instanceName = \Klarna\Kco\Model\Api\Builder\Kasper::class;
-        if ($this->moduleManager->isEnabled('Klarna_Kco') && class_exists($instanceName)) {
-                return $this->objectManager->get($instanceName);
+        $instanceName = \Magento\InventoryApi\Api\GetProductSalableQtyInterface::class;
+        if ($this->moduleManager->isEnabled('Magento_InventoryApi')
+            && class_exists($instanceName)) {
+            return $this->objectManager->get($instanceName);
         }
+
         return null;
     }
 }

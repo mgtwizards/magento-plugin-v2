@@ -3,7 +3,7 @@
 namespace Porterbuddy\Porterbuddy\Model\Config\Source;
 
 use Exception;
-use Magento\InventoryApi\Api\StockRepositoryInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\StockRepositoryInstance as StockRepositoryInterface;
 
 class InventoryStock implements \Magento\Framework\Option\ArrayInterface
 {
@@ -20,16 +20,16 @@ class InventoryStock implements \Magento\Framework\Option\ArrayInterface
     public function __construct(
         StockRepositoryInterface $stockRepository
     ){
-        $this->stockRepository = $stockRepository;
+        $this->stockRepository = $stockRepository->get();
     }
 
     public function toOptionArray($isMultiselect = false)
     {
         $options = [];
 
-        try{
+        if ($this->stockRepository) {
             $stocks = $this->stockRepository->getList()->getItems();
-            foreach($stocks as $stock){
+            foreach ($stocks as $stock) {
                 $options[] = [
                     'value' => $stock->getStockId(),
                     'label' => $stock->getName()
@@ -37,12 +37,11 @@ class InventoryStock implements \Magento\Framework\Option\ArrayInterface
             }
 
             if (!$isMultiselect) {
-                array_unshift($options, ['value' => '', 'label' => __('--Please Select--')]);
+                array_unshift($options, [
+                    'value' => '',
+                    'label' => __('--Please Select--')
+                ]);
             }
-
-
-        }catch(Exception $e){
-            //probably not configured, we just skip it and have no options.
         }
 
         return $options;

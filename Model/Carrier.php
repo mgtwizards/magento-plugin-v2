@@ -11,8 +11,6 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\Format;
-use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
-use Magento\InventorySalesApi\Api\IsProductSalableForRequestedQtyInterface;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
@@ -29,6 +27,7 @@ use Porterbuddy\Porterbuddy\Exception as PorterbuddyException;
 use Porterbuddy\Porterbuddy\Exception;
 use Porterbuddy\Porterbuddy\Helper\Data;
 use Porterbuddy\Porterbuddy\Model\ErrorNotifier\NotifierInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\GetProductSalableQtyInstance as GetProductSalableQtyInterface;
 use Psr\Log\LoggerInterface;
 
 class Carrier extends AbstractCarrier implements CarrierInterface
@@ -118,7 +117,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $rateMethodFactory;
 
     /**
-     * @var \Magento\InventorySalesApi\Api\GetProductSalableQtyInterface
+     * @var GetProductSalableQtyInterface
      */
     protected $getProductSalableQty;
 
@@ -175,7 +174,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $this->timeslots = $timeslots;
         $this->senderResolver = $senderResolver;
         $this->session = $session;
-        $this->getProductSalableQty = $getProductSalableQty;
+        $this->getProductSalableQty = $getProductSalableQty->get();
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
@@ -278,7 +277,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         }
         foreach ($items as $item) {
             $_product = $item->getProduct();
-            try {
+            if ($this->getProductSalableQty) {
                 $inventoryStock = $this->helper->getInventoryStock();
 
                 if($inventoryStock != null){
@@ -289,7 +288,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 }
 
 
-            }catch(\Exception $localizedException){
+            } else {
                 $this->_logger->debug($localizedException);
                 //probably means MSI not supported?
             }
