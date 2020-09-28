@@ -289,7 +289,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
 
             } else {
-                $this->_logger->debug($localizedException);
+                $this->_logger->debug(__('MSI not supported'));
                 //probably means MSI not supported?
             }
             if (!$_product->isSaleable()) {
