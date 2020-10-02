@@ -1,13 +1,11 @@
 <?php
-/**
- * @author Convert Team
- * @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
- */
+
 namespace Porterbuddy\Porterbuddy\Controller\Delivery;
 
 use Magento\Framework\Exception\LocalizedException;
 
-class Options extends \Magento\Framework\App\Action\Action
+
+class Timeslots extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Framework\Data\Form\FormKey\Validator
@@ -63,50 +61,20 @@ class Options extends \Magento\Framework\App\Action\Action
                 'message' => __('Method not allowed'),
             ]);
         }
-        if (!$this->formKeyValidator->validate($this->getRequest())) {
-            return $result->setData([
-                'errors' => true,
-                'message' => __('Invalid Form Key. Please refresh the page.'),
-            ]);
-        }
 
-        $resultData = [];
-        $type = $this->getRequest()->getPost('type');
-        $quote = $this->session->getQuote();
-        if($type == 'comment'){
-            $resultData['type'] = 'comment';
-            $comment = $this->getRequest()->getPost('comment');
-            $resultData['value'] = $comment;
+        $refresh = $this->getRequest()->getPost('refresh');
 
-            $quote->setPbComment($comment);
-        }elseif($type == 'doorstep'){
-            $resultData['type'] = 'doorstep';
-            $doorstep =  $this->getRequest()->getPost('leave_doorstep');
-            if($doorstep == 'true'){
-                $resultData['value'] = 'true';
-                $quote->setPbLeaveDoorstep(1);
-            }else{
-                $resultData['value'] = 'false';
-                $quote->setPbLeaveDoorstep(0);
-            }
-        }
+        if($refresh || !$this->session->getPbDiscount()) {
+            /** @var \Magento\Quote\Model\Quote */
+            $quote = $this->session->getQuote();
 
-        try {
-            $this->quoteRepository->save($quote);
-        } catch (LocalizedException $e) {
-            return $result->setData([
-                'errors' => true,
-                'message' => $e->getMessage(),
-            ]);
-        } catch (\Exception $e) {
-            return $result->setData([
-                'errors' => true,
-                'message' => __('An error occurred when updating cart'),
-            ]);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+            $quote->collectTotals();
         }
-        $resultData['setDoorstep'] = $quote->getPbLeaveDoorsep();
-        $resultData['comment'] = $quote->getPbComment();
-        $resultData['errors'] = false;
-        return $result->setData($resultData);
+        return $result->setData([
+            'errors' => false,
+            'timeslots' => $this->session->getPbOptions(),
+            'totalDiscount' => $this->session->getPbDiscount()
+        ]);
     }
 }

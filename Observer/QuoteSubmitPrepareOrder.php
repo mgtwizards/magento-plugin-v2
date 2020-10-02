@@ -35,7 +35,10 @@ class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterf
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
      */
     protected $localeDate;
-
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $session;
     /**
      * @param \Magento\Shipping\Model\CarrierFactory $carrierFactory
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
@@ -44,11 +47,13 @@ class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterf
     public function __construct(
         \Magento\Shipping\Model\CarrierFactory $carrierFactory,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \Magento\Checkout\Model\Session $session
     ) {
         $this->carrierFactory = $carrierFactory;
         $this->helper = $helper;
         $this->localeDate = $localeDate;
+        $this->session = $session;
     }
 
     /**
@@ -74,6 +79,20 @@ class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterf
 
         $this->changeShippingDescription($order);
         $this->copyFields($quote, $order);
+
+        $token = '';
+        $options = $this->session->getPbOptions();
+        $methodInfo = $this->helper->parseMethod($order->getShippingMethod());
+        foreach( $options as $option) {
+            if($option['product'] == $methodInfo->getType() &&
+                $option['start'] == $methodInfo->getStart() &&
+                $option['end'] == $methodInfo->getEnd()){
+                $token = $option['token'];
+                break;
+            }
+        }
+        $order->setPbToken($token);
+
     }
 
     /**

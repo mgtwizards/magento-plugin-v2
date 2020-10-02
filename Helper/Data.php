@@ -20,25 +20,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_TITLE = 'carriers/porterbuddy/title';
     const XML_PATH_DESCRIPTION = 'carriers/porterbuddy/description';
     const XML_PATH_ASAP_NAME = 'carriers/porterbuddy/asap_name';
-    const XML_PATH_CHOOSE_LATER_NAME = 'carriers/porterbuddy/choose_later_name';
     const XML_PATH_AUTO_CREATE_SHIPMENT = 'carriers/porterbuddy/auto_create_shipment';
     const XML_PATH_API_MODE = 'carriers/porterbuddy/api_mode';
     const XML_PATH_API_TIMEOUT = 'carriers/porterbuddy/api_timeout';
-    const XML_PATH_DEVELOPMENT_API_URL = 'carriers/porterbuddy/development_api_url';
-    const XML_PATH_DEVELOPMENT_API_KEY = 'carriers/porterbuddy/development_api_key';
     const XML_PATH_TESTING_API_URL = 'carriers/porterbuddy/testing_api_url';
     const XML_PATH_TESTING_API_KEY = 'carriers/porterbuddy/testing_api_key';
+    const XML_PATH_TESTING_PUBLIC_KEY = 'carriers/porterbuddy/testing_public_key';
     const XML_PATH_PRODUCTION_API_URL = 'carriers/porterbuddy/production_api_url';
     const XML_PATH_PRODUCTION_API_KEY = 'carriers/porterbuddy/production_api_key';
+    const XML_PATH_PRODUCTION_PUBLIC_KEY = 'carriers/porterbuddy/production_public_key';
+    const XML_PATH_WIDGET_URL = 'carriers/porterbuddy/widget_url';
+
     const XML_PATH_INBOUND_TOKEN = 'carriers/porterbuddy/inbound_token';
 
-    const XML_PATH_POSTCODES = 'carriers/porterbuddy/postcodes';
     const XML_PATH_SHOW_AVAILABILITY = 'carriers/porterbuddy/show_availability';
-    const XML_PATH_LOCATION_DISCOVERY = 'carriers/porterbuddy/location_discovery';
     const XML_PATH_LOCATION_LINK_TEMPLATE = 'carriers/porterbuddy/location_link_template';
     const XML_PATH_AVAILABILITY_TEMPLATE = 'carriers/porterbuddy/availability_template';
-    const XML_PATH_AVAILABILITY_CHOOSE_POPUP_TITLE = 'carriers/porterbuddy/availability_choose_popup_title';
-    const XML_PATH_AVAILABILITY_CHOOSE_POPUP_DESCRIPTION = 'carriers/porterbuddy/availability_choose_popup_description';
     const XML_PATH_AVAILABILITY_TEXT_FETCHING = 'carriers/porterbuddy/availability_text_fetching';
     const XML_PATH_AVAILABILITY_TEXT_CLICK_TO_SEE = 'carriers/porterbuddy/availability_text_click_to_see';
     const XML_PATH_AVAILABILITY_TEXT_POSTCODE_ERROR = 'carriers/porterbuddy/availability_text_postcode_error';
@@ -46,25 +43,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_AVAILABILITY_TEXT_NO_DATE = 'carriers/porterbuddy/availability_text_delivery_no_date';
     const XML_PATH_AVAILABILITY_AUTO_UPDATE_COMPOSITE = 'carriers/porterbuddy/availability_auto_update_composite';
 
+    const XML_PATH_ADDRESS_WARNING_TEXT = 'carriers/porterbuddy/address_warning_text';
+    const XML_PATH_ADDRESS_WARNING_CLOSE_LABEL = 'carriers/porterbuddy/address_warning_close_label';
+    const XML_PATH_ADDRESS_WARNING_TITLE = 'carriers/porterbuddy/address_warning_title';
+
     const XML_PATH_DEFAULT_PHONE_CODE = 'carriers/porterbuddy/default_phone_code';
     const XML_PATH_PACKAGER_MODE = 'carriers/porterbuddy/packager_mode';
+    const XML_PATH_INVENTORY_STOCK = 'carriers/porterbuddy/inventory_stock';
     const XML_PATH_PACKING_TIME = 'carriers/porterbuddy/packing_time';
     const XML_PATH_PRESELECT_LOCATION = 'carriers/porterbuddy/preselect_location';
     const XML_PATH_RETURN_ENABLED = 'carriers/porterbuddy/return_enabled';
-    const XML_PATH_TIMESLOT_SELECTION = 'carriers/porterbuddy/timeslot_selection';
     const XML_PATH_DAYS_AHEAD = 'carriers/porterbuddy/days_ahead';
     const XML_PATH_EXTRA_PICKUP_WINDOWS = 'carriers/porterbuddy/pickup_windows_extra';
-    const XML_PATH_TIMESLOT_WINDOW = 'carriers/porterbuddy/timeslot_window';
 
     const XML_PATH_PRICE_OVERRIDE_EXPRESS = 'carriers/porterbuddy/price_override_express';
     const XML_PATH_PRICE_OVERRIDE_EXPRESS_RETURN = 'carriers/porterbuddy/price_override_express_return';
     const XML_PATH_PRICE_OVERRIDE_DELIVERY = 'carriers/porterbuddy/price_override_delivery';
     const XML_PATH_PRICE_OVERRIDE_DELIVERY_RETURN = 'carriers/porterbuddy/price_override_delivery_return';
 
-    const XML_PATH_DISCOUNT_TYPE = 'carriers/porterbuddy/discount_type';
-    const XML_PATH_DISCOUNT_SUBTOTAL = 'carriers/porterbuddy/discount_subtotal';
-    const XML_PATH_DISCOUNT_AMOUNT = 'carriers/porterbuddy/discount_amount';
-    const XML_PATH_DISCOUNT_PERCENT = 'carriers/porterbuddy/discount_percent';
+    const XML_PATH_DISCOUNTS = 'carriers/porterbuddy/discounts';
 
     const XML_PATH_HOURS_MON = 'carriers/porterbuddy/hours_mon';
     const XML_PATH_HOURS_TUE = 'carriers/porterbuddy/hours_tue';
@@ -93,12 +90,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_ID_CHECK_ATTR = 'carriers/porterbuddy/id_check_attr';
     const XML_PATH_ONLY_RECIPIENT_ATTR = 'carriers/porterbuddy/only_to_recipient_attr';
 
+    const XML_PATH_CHECKOUT_WIDGET_TITLE = 'carriers/porterbuddy/checkout_widget_title';
+    const XML_PATH_ENTER_POSTCODE_TEXT = 'carriers/porterbuddy/enter_postcode_text';
+
+    const XML_PATH_HOME_DELIVERY_TITLE = 'carriers/porterbuddy/home_delivery_title';
+    const XML_PATH_PICKUP_POINT_TITLE = 'carriers/porterbuddy/pickup_point_title';
+    const XML_PATH_COLLECT_IN_STORE_TITLE = 'carriers/porterbuddy/collect_in_store_title';
+
     const XML_PATH_RETURN_TEXT = 'carriers/porterbuddy/return_text';
     const XML_PATH_RETURN_SHORT_TEXT = 'carriers/porterbuddy/return_short_text';
     const XML_PATH_REFRESH_OPTIONS_TIMEOUT = 'carriers/porterbuddy/refresh_options_timeout';
     const XML_PATH_LEAVE_DOORSTEP_ENABLED = 'carriers/porterbuddy/leave_doorstep_enabled';
     const XML_PATH_LEAVE_DOORSTEP_TEXT = 'carriers/porterbuddy/leave_doorstep_text';
     const XML_PATH_COMMENT_TEXT = 'carriers/porterbuddy/comment_text';
+    const XML_PATH_HIDE_SHIPPING_EMPTY_ADDRESS = 'carriers/porterbuddy/hide_shipping_empty_address';
     const XML_PATH_WEIGHT_UNIT = 'carriers/porterbuddy/weight_unit';
     const XML_PATH_DIMENSION_UNIT = 'carriers/porterbuddy/dimension_unit';
     const XML_PATH_DEFAULT_PRODUCT_WEIGHT = 'carriers/porterbuddy/default_product_weight';
@@ -122,7 +127,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_DEBUG = 'carriers/porterbuddy/debug';
 
     const SHIPMENT_CREATOR_CRON = 'CRON';
-    const SHIPMENT_CREATOR_CONFIRMATION = 'CONFIRMATION';
 
     /**
      * @var \Magento\Framework\Locale\Format
@@ -191,13 +195,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_DESCRIPTION, ScopeInterface::SCOPE_STORE);
     }
 
-    /**
-     * @return string
-     */
-    public function getChooseLaterName()
-    {
-        return $this->scopeConfig->getValue(self::XML_PATH_CHOOSE_LATER_NAME, ScopeInterface::SCOPE_STORE);
-    }
 
     /**
      * @return bool
@@ -233,11 +230,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         switch ($this->getApiMode()) {
             case Carrier::MODE_PRODUCTION:
                 return $this->scopeConfig->getValue(self::XML_PATH_PRODUCTION_API_URL, ScopeInterface::SCOPE_WEBSITES);
-            case Carrier::MODE_TESTING:
-                return $this->scopeConfig->getValue(self::XML_PATH_TESTING_API_URL, ScopeInterface::SCOPE_WEBSITES);
             default:
-                return $this->scopeConfig->getValue(self::XML_PATH_DEVELOPMENT_API_URL, ScopeInterface::SCOPE_WEBSITES);
+                return $this->scopeConfig->getValue(self::XML_PATH_TESTING_API_URL, ScopeInterface::SCOPE_WEBSITES);
         }
+    }
+
+    /**
+     * Porterbuddy Widget URL
+     *
+     * @return string
+     */
+    public function getWidgetUrl()
+    {
+
+        return $this->scopeConfig->getValue(self::XML_PATH_WIDGET_URL, ScopeInterface::SCOPE_WEBSITES);
+
     }
 
     /**
@@ -250,10 +257,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         switch ($this->getApiMode()) {
             case Carrier::MODE_PRODUCTION:
                 return $this->scopeConfig->getValue(self::XML_PATH_PRODUCTION_API_KEY, ScopeInterface::SCOPE_WEBSITES);
-            case Carrier::MODE_TESTING:
-                return $this->scopeConfig->getValue(self::XML_PATH_TESTING_API_KEY, ScopeInterface::SCOPE_WEBSITES);
             default:
-                return $this->scopeConfig->getValue(self::XML_PATH_DEVELOPMENT_API_KEY, ScopeInterface::SCOPE_WEBSITES);
+                return $this->scopeConfig->getValue(self::XML_PATH_TESTING_API_KEY, ScopeInterface::SCOPE_WEBSITES);
+
+        }
+    }
+
+    /**
+     * Porterbuddy API key with regard to selected API mode
+     *
+     * @return string
+     */
+    public function getPublicKey()
+    {
+        switch ($this->getApiMode()) {
+            case Carrier::MODE_PRODUCTION:
+                return $this->scopeConfig->getValue(self::XML_PATH_PRODUCTION_PUBLIC_KEY, ScopeInterface::SCOPE_WEBSITES);
+            default:
+                return $this->scopeConfig->getValue(self::XML_PATH_TESTING_PUBLIC_KEY, ScopeInterface::SCOPE_WEBSITES);
+
         }
     }
 
@@ -286,6 +308,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Inventory Stock
+     *
+     * @return string
+     */
+    public function getInventoryStock()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_INVENTORY_STOCK, ScopeInterface::SCOPE_STORE);
+
+    }
+
+    /**
      * Returns packing time
      *
      * @return float
@@ -313,25 +346,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_SHOW_AVAILABILITY, ScopeInterface::SCOPE_STORE);
     }
 
-    /**
-     * @return array
-     */
-    public function getLocationDiscovery()
-    {
-        $options = $this->scopeConfig->getValue(self::XML_PATH_LOCATION_DISCOVERY, ScopeInterface::SCOPE_STORE);
-        if ($options) {
-            $options = explode(',', $options);
-            $options = array_map('trim', $options);
-        } else {
-            $options = [];
-        }
-        return $options;
-    }
-
-    public function ipDiscoveryEnabled()
-    {
-        return in_array('ip', $this->getLocationDiscovery());
-    }
 
     /**
      * Delivery availability template text
@@ -391,26 +405,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getAvailabilityTextNoDate()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_AVAILABILITY_TEXT_NO_DATE, ScopeInterface::SCOPE_STORE);
-    }
-
-    /**
-     * Delivery availability change popup title
-     *
-     * @return string
-     */
-    public function getAvailabilityChoosePopupTitle()
-    {
-        return $this->scopeConfig->getValue(self::XML_PATH_AVAILABILITY_CHOOSE_POPUP_TITLE, ScopeInterface::SCOPE_STORE);
-    }
-
-    /**
-     * Delivery availability change popup description
-     *
-     * @return string
-     */
-    public function getAvailabilityChoosePopupDescription()
-    {
-        return $this->scopeConfig->getValue(self::XML_PATH_AVAILABILITY_CHOOSE_POPUP_DESCRIPTION, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -642,22 +636,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @return string \Porterbuddy\Porterbuddy\Model\Carrier::TIMESLOT_CHECKOUT_* constant
-     */
-    public function getTimeslotSelection()
-    {
-        return $this->scopeConfig->getValue(self::XML_PATH_TIMESLOT_SELECTION, ScopeInterface::SCOPE_WEBSITES);
-    }
-
-    /**
-     * @return bool
-     */
-    public function getShowTimeslots()
-    {
-        return Carrier::TIMESLOT_CHECKOUT == $this->getTimeslotSelection();
-    }
-
-    /**
      * @return int
      */
     public function getExtraPickupWindows()
@@ -726,45 +704,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Discount type as defined in \Porterbuddy\Porterbuddy\Model\Carrier::DISCOUNT_TYPE_*
-     *
-     * @return string
+     * @return array
      */
-    public function getDiscountType()
+    public function getDiscounts()
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_DISCOUNT_TYPE, ScopeInterface::SCOPE_WEBSITES);
-    }
-
-    /**
-     * Min order subtotal to apply discount, in base currency
-     *
-     * @return float
-     */
-    public function getDiscountSubtotal()
-    {
-        $value = $this->scopeConfig->getValue(self::XML_PATH_DISCOUNT_SUBTOTAL, ScopeInterface::SCOPE_WEBSITES);
-        return $this->localeFormat->getNumber($value);
-    }
-
-    /**
-     * Fixed discount amount, in base currency
-     *
-     * @return float
-     */
-    public function getDiscountAmount()
-    {
-        $value = $this->scopeConfig->getValue(self::XML_PATH_DISCOUNT_AMOUNT, ScopeInterface::SCOPE_WEBSITES);
-        return $this->localeFormat->getNumber($value);
-    }
-
-    /**
-     * Discount percent
-     *
-     * @return int
-     */
-    public function getDiscountPercent()
-    {
-        return (int)$this->scopeConfig->getValue(self::XML_PATH_DISCOUNT_PERCENT, ScopeInterface::SCOPE_WEBSITES);
+        $discounts = [];
+        $value = $this->scopeConfig->getValue(
+            self::XML_PATH_DISCOUNTS,
+            ScopeInterface::SCOPE_WEBSITES
+        );
+        $rows = $this->unserialize($value);
+        foreach ((array)$rows as $row) {
+            if (isset($row['discount'])) {
+                $discounts[] = (array)$row;
+            }
+        }
+        return $discounts;
     }
 
     /**
@@ -783,6 +738,44 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->isSetFlag(self::XML_PATH_PRESELECT_LOCATION, ScopeInterface::SCOPE_STORE);
     }
 
+    /**
+     * @return string
+     */
+    public function getCheckoutWidgetTitle()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_CHECKOUT_WIDGET_TITLE, ScopeInterface::SCOPE_STORE);
+    }
+    /**
+     * @return string
+     */
+    public function getEnterPostcodeText()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ENTER_POSTCODE_TEXT, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHomeDeliveryTitle()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_HOME_DELIVERY_TITLE, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPickupPointTitle()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PICKUP_POINT_TITLE, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCollectInStoreTitle()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_COLLECT_IN_STORE_TITLE, ScopeInterface::SCOPE_STORE);
+    }
 
     /**
      * @return string
@@ -798,6 +791,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getReturnShortText()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_RETURN_SHORT_TEXT, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddressWarningText()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ADDRESS_WARNING_TEXT, ScopeInterface::SCOPE_STORE);
+    }
+    /**
+     * @return string
+     */
+    public function getAddressWarningTitle()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ADDRESS_WARNING_TITLE, ScopeInterface::SCOPE_STORE);
+    }
+    /**
+     * @return string
+     */
+    public function getAddressWarningCloseLabel()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_ADDRESS_WARNING_CLOSE_LABEL, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -835,6 +850,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCommentText()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_COMMENT_TEXT, ScopeInterface::SCOPE_STORE);
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getHideShippingOnEmptyAddress()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_HIDE_SHIPPING_EMPTY_ADDRESS, ScopeInterface::SCOPE_STORE);
     }
 
     /**

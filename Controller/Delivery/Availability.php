@@ -7,14 +7,13 @@ namespace Porterbuddy\Porterbuddy\Controller\Delivery;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\DataObject;
+use Exception;
+use Magento\Framework\Exception\LocalizedException;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\GetProductSalableQtyInstance as GetProductSalableQtyInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\IsProductSalableInstance as IsProductSalableInterface;
 
 class Availability extends \Magento\Framework\App\Action\Action
 {
-    /**
-     * @var \Porterbuddy\Porterbuddy\Model\Availability
-     */
-    protected $availability;
-
     /**
      * @var \Magento\Checkout\Model\Session
      */
@@ -41,26 +40,39 @@ class Availability extends \Magento\Framework\App\Action\Action
     protected $productFactory;
 
     /**
-     * @param \Porterbuddy\Porterbuddy\Model\Availability $availability
+     * @var GetProductSalableQtyInterface
+     */
+    protected $getProductSalableQty;
+
+    /**
+     * @var IsProductSalableInterface
+     */
+    protected $isProductSalable;
+
+    /**
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
      * @param \Magento\Catalog\Model\ProductFactory $catalogProductFactory
+     * @param GetProductSalableQtyInterface $getProductSalableQty
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param Context $context
      */
     public function __construct(
-        \Porterbuddy\Porterbuddy\Model\Availability $availability,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
+        GetProductSalableQtyInterface $getProductSalableQty,
+        IsProductSalableInterface $isProductSalable,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Framework\App\Action\Context $context
+
     ) {
-        $this->availability = $availability;
         $this->eventManager = $eventManager;
         $this->helper = $helper;
         $this->productFactory = $catalogProductFactory;
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->getProductSalableQty = $getProductSalableQty->get();
+        $this->isProductSalable = $isProductSalable->get();
         parent::__construct($context);
     }
 
@@ -76,16 +88,10 @@ class Availability extends \Magento\Framework\App\Action\Action
         /** @var \Magento\Framework\Controller\Result\Json $result */
         $result = $this->resultJsonFactory->create();
 
-        $postcode = $this->getRequest()->getParam('postcode');
         $productId = $this->getRequest()->getParam('productId');
         $qty = $this->getRequest()->getParam('qty');
 
-        if (!$postcode) {
-            return $result->setData([
-                'error' => true,
-                'messages' => __('Postcode is required'),
-            ]);
-        }
+
         if (!$productId) {
             return $result->setData([
                 'error' => true,
@@ -93,14 +99,6 @@ class Availability extends \Magento\Framework\App\Action\Action
             ]);
         }
 
-        if (!$this->availability->isPostcodeSupported($postcode)) {
-            return $result->setData([
-                'error' => true,
-                'messages' => $this->helper->processPlaceholders(
-                    $this->helper->getAvailabilityTextPostcodeError()
-                )
-            ]);
-        }
 
         // check product is in stock
         /** @var \Magento\Catalog\Model\Product $product */
@@ -128,38 +126,46 @@ class Availability extends \Magento\Framework\App\Action\Action
             ]);
         }
 
-        // check store working hours + Porterbuddy hours
-        $date = $this->availability->getAvailableUntil();
-        if (!$date) {
-            return $result->setData([
-                'error' => true,
-                'messages' => $this->helper->processPlaceholders(
-                    $this->helper->getAvailabilityTextNoDate()
-                )
-            ]);
-        }
-
-        $now = $this->helper->getCurrentTime();
-        // server-based countdown in case browser's clocks lie
-        $timeRemaining = floor(($date->getTimestamp() - $now->getTimestamp())/60); // minutes
-
-        // today, tomorrow, Monday, May 28
-        if ($now->format('Y-m-d') == $date->format('Y-m-d')) {
-            $humanDate = mb_convert_case(__('Today'), MB_CASE_LOWER);
-        } elseif ($now->modify('+1 day')->format('Y-m-d') == $date->format('Y-m-d')) {
-            $humanDate = mb_convert_case(__('Tomorrow'), MB_CASE_LOWER);
+        $messages = "";
+        if ($this->getProductSalableQty && $this->isProductSalable) {
+            if ($this->helper->getInventoryStock() != null) {
+                if($product->getTypeId() == 'simple') {
+                    $qtyInStock = $this->getProductSalableQty->execute($product->getSku(), $this->helper->getInventoryStock());
+                    if ($qty > $qtyInStock) {
+                        return $result->setData([
+                            'error' => true,
+                            'messages' => $this->helper->processPlaceholders(
+                                $this->helper->getAvailabilityTextOutOfStock()
+                            )
+                        ]);
+                    } else {
+                        $messages = "stock = " . $this->helper->getInventoryStock() . " " . $product->getSku() . " " . $qty . " in stock " . $qtyInStock . " " . $product->getTypeId();
+                    }
+                }else{
+                    if($this->isProductSalable->execute($product->getSku(), $this->helper->getInventoryStock())){
+                        $messages = "product is saleable";
+                    }else{
+                        return $result->setData([
+                            'error' => true,
+                            'messages' => $this->helper->processPlaceholders(
+                                $this->helper->getAvailabilityTextOutOfStock()
+                            )
+                        ]);
+                    }
+                }
+            } else {
+                $messages = "inventory stock null";
+            }
         } else {
-            $humanDate = __($date->format('D'));
+            $messages = $e->getLogMessage() . " " . $product->getSku() . " " . $product->getTypeId();
+            //probably just means MSI not supported here.
         }
+
 
         $transport = new DataObject([
             'available' => true,
-            'date' => $date,
-            'humanDate' => $humanDate,
-            'timeRemaining' => $timeRemaining,
         ]);
         $this->eventManager->dispatch('porterbuddy_availability', array(
-            'postcode' => $postcode,
             'product' => $product,
             'qty' => $qty,
             'result' => $transport,
@@ -177,9 +183,7 @@ class Availability extends \Magento\Framework\App\Action\Action
         return $result->setData([
             'error' => false,
             'available' => true,
-            'date' => $date->format(\DateTime::ATOM),
-            'humanDate' => $humanDate,
-            'timeRemaining' => $timeRemaining,
+            'messages' => $messages
         ]);
     }
 }

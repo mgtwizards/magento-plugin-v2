@@ -7,22 +7,6 @@
 /** @var Porterbuddy\Porterbuddy\Block\Availability $block */
 $helper = $block->getHelper();
 ?>
-<div id="porterbuddy-availability" class="porterbuddy-availability" style="display: none">
-    <div class="porterbuddy-widget-logo-wrapper">
-        <img src="<?= $block->getViewFileUrl('Porterbuddy_Porterbuddy/images/logo_porterbuddy.svg') ?>"
-             class="image porterbuddy-widget-logo"
-            width="118"
-            height="24"
-            alt="Porterbuddy" />
-    </div>
-    <span class="porterbuddy-availability-location-link" data-open="porterbuddy-popup">
-        <?= $helper->processPlaceholders(
-            $helper->getLocationLinkTemplate()
-        ) ?>
-    </span>
-    <div class="porterbuddy-availability-text">
-        <?= $helper->processPlaceholders(
-            $helper->getAvailabilityTemplate()
-        ) ?>
-    </div>
-</div>
+<div id="porterbuddy-widget" data-border></div>
+
+

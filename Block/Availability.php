@@ -6,6 +6,9 @@
 namespace Porterbuddy\Porterbuddy\Block;
 
 use Magento\Catalog\Model\Product;
+use Magento\Framework\Exception\LocalizedException;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\GetProductSalableQtyInstance as GetProductSalableQtyInterface;
+use Porterbuddy\Porterbuddy\Model\InventoryApi\IsProductSalableInstance as IsProductSalableInterface;
 use Porterbuddy\Porterbuddy\Model\Carrier;
 
 class Availability extends \Magento\Framework\View\Element\Template
@@ -27,16 +30,31 @@ class Availability extends \Magento\Framework\View\Element\Template
      */
     protected $registry;
 
+    /**
+     * @var GetProductSalableQtyInterface
+     */
+    protected $getProductSalableQty;
+
+    /**
+     * @var IsProductSalableInterface
+     */
+    protected $isProductSalable;
+
+
     public function __construct(
         \Magento\Directory\Helper\Data $directoryHelper,
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
         \Magento\Framework\Registry $registry,
+        GetProductSalableQtyInterface $getProductSalableQty,
+        IsProductSalableInterface $isProductSalable,
         \Magento\Framework\View\Element\Template\Context $context,
         array $data = []
     ) {
         $this->directoryHelper = $directoryHelper;
         $this->helper = $helper;
         $this->registry = $registry;
+        $this->getProductSalableQty = $getProductSalableQty->get();
+        $this->isProductSalable = $isProductSalable->get();
         parent::__construct($context, $data);
     }
 
@@ -84,10 +102,25 @@ class Availability extends \Magento\Framework\View\Element\Template
         ) {
             return '';
         }
-
         $product = $this->getProduct();
+
+        if ($this->getProductSalableQty && $this->isProductSalable) {
+            if ($this->helper->getInventoryStock() != null) {
+                if ($product->getTypeId() === 'simple') {
+                    $qtyInStock = $this->getProductSalableQty->execute($product->getSku(), $this->helper->getInventoryStock());
+                    if (1 > $qtyInStock) {
+                        return '';
+                    }
+                } else {
+                    if (!$this->isProductSalable->execute($product->getSku(), $this->helper->getInventoryStock())) {
+                        return '';
+                    }
+                }
+            }
+        }
+
         if (!$product->isSalable() || $product->isVirtual()) {
-            return '';
+            return parent::_toHtml();
         }
 
         return parent::_toHtml();

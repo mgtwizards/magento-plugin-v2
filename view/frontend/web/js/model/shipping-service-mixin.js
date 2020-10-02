@@ -18,7 +18,7 @@ define([
         return $.extend(shippingService, {
             setShippingRates: wrapper.wrap(shippingService.setShippingRates, function (original, ratesData) {
                 // split Porterbuddy and other rates
-                rateFilter.extractPorterbuddyRates(ratesData);
+                rateFilter.extractRates(ratesData);
                 // run original checkout-data-resolver.resolveShippingRates to check selected shipping method
                 original(ratesData);
 

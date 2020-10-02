@@ -67,6 +67,14 @@
     }
 }
 
+
+.porterbuddy-desktop-view {
+    display: none;
+}
+
+
+
+
 .porterbuddy-widget .porterbuddy-widget-timeslot:hover {
     background-color: #d7f6f3;
     cursor: default;
@@ -418,4 +426,9 @@
     clear: both;
     font-size: 15px;
     margin-left: 3px;
+}
+
+.checkout-shipping-method .porterbuddy {
+    margin: 0 auto;
+    max-width: 612px;
 }

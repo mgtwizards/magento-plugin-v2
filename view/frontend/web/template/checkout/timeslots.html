@@ -2,9 +2,7 @@
   ~ @author Convert Team
   ~ @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
   -->
-<div id="timeslots" class="porterbuddy-widget-timeslots" data-bind="foreach: { data: timeslots, as: 'timeslot' }">
-    <div class="porterbuddy-widget-timeslot" data-bind="attr: {'data-datetime': timeslot.start}, click: $parent.selectTimeslot.bind($parent), css: {active: $parent.selectedTimeslot() && timeslot.value == $parent.selectedTimeslot().value}">
-        <h6 data-bind="html: timeslot.label"></h6>
-        <p data-bind="html: timeslot.price"></p>
-    </div>
-</div>
+<!--ko if: window.pbHasWindows -->
+<div id="porterbuddy-widget"></div>
+<!-- /ko -->
+

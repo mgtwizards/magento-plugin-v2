@@ -24,30 +24,32 @@
                 <field id="asap_name" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Express Delivery Name</label>
                 </field>
-                <field id="choose_later_name" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Choose Timeslot Later Name</label>
-                </field>
                 <field id="api_mode" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Porterbuddy Mode</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Mode</source_model>
-                </field>
-                <field id="development_api_key" translate="label" type="obscure" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>API Key (Development)</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                    <depends>
-                        <field id="api_mode">development</field>
-                    </depends>
                 </field>
                 <field id="testing_api_key" translate="label" type="obscure" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API Key (Testing)</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends>
-                        <field id="api_mode">testing</field>
+                        <field id="api_mode">test</field>
+                    </depends>
+                </field>
+                <field id="testing_public_key" translate="label" type="text" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Public Key (Testing)</label>
+                    <depends>
+                        <field id="api_mode">test</field>
                     </depends>
                 </field>
                 <field id="production_api_key" translate="label" type="obscure" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API Key (Production)</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="api_mode">production</field>
+                    </depends>
+                </field>
+                <field id="production_public_key" translate="label" type="text" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>API Key (Production)</label>
                     <depends>
                         <field id="api_mode">production</field>
                     </depends>
@@ -60,79 +62,54 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="heading_availability_widget" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="heading_availability_widget" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Availability Widget Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="show_availability" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Show Geo-based Availibility Widget</label>
+                <field id="show_availability" translate="label" type="select" sortOrder="155" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Show Availibility Widget</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Availability</source_model>
                 </field>
-                <field id="location_discovery" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Location Discovery</label>
-                    <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Location</source_model>
-                    <can_be_empty>1</can_be_empty>
-                </field>
-                <field id="maps_api_key" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Google Maps API Key</label>
-                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                </field>
-                <field id="postcodes_update" translate="label" type="button" sortOrder="170" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
-                    <label>Allowed Postcodes</label>
-                    <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Postcodes</frontend_model>
-                </field>
-                <field id="availability_text_click_to_see" translate="label tooltip" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_click_to_see" translate="label tooltip" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Click to see text</label>
-                    <tooltip><![CDATA[Can use &lt;a&gt;link&lt;/a&gt;, &lt;a class="button"&gt;link&lt;/a&gt; for clickable link]]></tooltip>
                 </field>
-                <field id="location_link_template" translate="label comment tooltip" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Location Link Template</label>
-                    <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
-                    <tooltip><![CDATA[Can use &lt;a&gt;link&lt;/a&gt;, &lt;a class="button"&gt;link&lt;/a&gt; for clickable link]]></tooltip>
-                </field>
-                <field id="availability_text_fetching" translate="label comment" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Availability fetching text</label>
-                    <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
-                </field>
-                <field id="availability_template" translate="label comment" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_template" translate="label comment" type="text" sortOrder="165" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Availability Text Template</label>
-                    <comment>Can use [[date]], [[countdown]] placeholders</comment>
                 </field>
-                <field id="availability_text_postcode_error" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_postcode_error" translate="label comment" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Postcode not available text</label>
-                    <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
                 </field>
-                <field id="availability_text_delivery_out_of_stock" translate="label comment" type="text" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Product is out of stock text</label>
-                    <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
-                </field>
-                <field id="availability_text_delivery_no_date" translate="label comment" type="text" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="availability_text_delivery_no_date" translate="label comment" type="text" sortOrder="175" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>No available dates text</label>
-                    <comment>Can use [[location]], [[postcode]], [[city]], [[country]] placeholders</comment>
-                </field>
-                <field id="availability_choose_popup_title" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Availability Change Popup Title</label>
-                </field>
-                <field id="availability_choose_popup_description" translate="label" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Availability Change Popup Description</label>
-                </field>
-                <field id="availability_auto_update_composite" translate="label comment" type="select" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Load configurable product availability</label>
-                    <comment>Disable if automatic simple option preselect is installed to eliminate double loading and widget flickering</comment>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
                 <field id="heading_checkout_widget" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Checkout Widget Settings</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="preselect_location" translate="label" type="select" sortOrder="305" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="checkout_widget_title" translate="label comment" type="text" sortOrder="301" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Checkout Widget Title</label>
+                    <comment>Title for checkout widget</comment>
+                </field>
+                <field id="enter_postcode_text" translate="label comment" type="text" sortOrder="302" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enter Postcode Text</label>
+                    <comment>Text to ask for postcode</comment>
+                </field>
+                <field id="home_delivery_title" translate="label comment" type="text" sortOrder="305" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Home Delivery Title</label>
+                    <comment>Title for Home Delivery on checkout widget</comment>
+                </field>
+                <field id="pickup_point_title" translate="label comment" type="text" sortOrder="306" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Pickup Point Title</label>
+                    <comment>Title for Pickup Point on checkout widget</comment>
+                </field>
+                <field id="collect_in_store_title" translate="label comment" type="text" sortOrder="307" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Collect In Store Title</label>
+                    <comment>Title for Collect in store on checkout widge</comment>
+                </field>
+                <field id="preselect_location" translate="label" type="select" sortOrder="319" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Prefill location - postcode and city</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="timeslot_selection" translate="label" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Pick time slot</label>
-                    <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Timeslot</source_model>
                 </field>
                 <field id="days_ahead" translate="label" type="text" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Available Days Ahead</label>
@@ -164,7 +141,12 @@
                 <field id="comment_text" translate="label" type="text" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Comment to courier text</label>
                 </field>
-
+                <field id="address_warning_title" translate="label" type="text" sortOrder="395" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Text to show above delivery options</label>
+                </field>
+                <field id="address_warning_text" translate="label" type="text" sortOrder="396" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Text to show above postcode box in delivery options</label>
+                </field>
                 <field id="heading_price_override" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Prices Override</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
@@ -190,32 +172,11 @@
                     <label>Shipping Discount</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
                 </field>
-                <field id="discount_type" translate="label" type="select" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Discount Type</label>
-                    <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\DiscountType</source_model>
+                <field id="discounts" translate="label" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Discounts</label>
+                    <frontend_model>Porterbuddy\Porterbuddy\Block\Adminhtml\Frontend\Discounts</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
-                <field id="discount_subtotal" translate="label" type="text" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Minimum Order Amount</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <depends>
-                        <field id="discount_type" separator=",">fixed,percent</field>
-                    </depends>
-                </field>
-                <field id="discount_amount" translate="label" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Discount Amount</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <depends>
-                        <field id="discount_type">fixed</field>
-                    </depends>
-                </field>
-                <field id="discount_percent" translate="label" type="text" sortOrder="540" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
-                    <label>Discount Percent</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <depends>
-                        <field id="discount_type">percent</field>
-                    </depends>
-                </field>
-
                 <field id="heading_hours" translate="label" type="text" sortOrder="600" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Open Hours</label>
                     <frontend_model>Magento\Config\Block\System\Config\Form\Field\Heading</frontend_model>
@@ -313,7 +274,11 @@
                     <label>Packager mode</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\PackagerMode</source_model>
                 </field>
-                <field id="packing_time" translate="label" type="text" sortOrder="840" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                <field id="inventory_stock" translate="label" type="select" sortOrder="840" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Inventory Stocks</label>
+                    <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\InventoryStock</source_model>
+                </field>
+                <field id="packing_time" translate="label" type="text" sortOrder="850" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Packing time, minutes</label>
                 </field>
 

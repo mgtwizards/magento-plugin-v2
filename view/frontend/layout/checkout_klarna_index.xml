@@ -4,59 +4,40 @@
   ~ @copyright Copyright (c) 2018 Convert (http://www.convert.no/)
   -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Porterbuddy_Porterbuddy::css/porterbuddy.css"/>
+        <script async="async" type="text/js" src="https://widget.porterbuddy.com/porterbuddy-widget.js" src_type="url" />
+        <css src="https://widget.porterbuddy.com/porterbuddy-widget.css" src_type="url" rel="stylesheet" type="text/css" />
+        <script async="async" type="text/js" src="https://widget.porterbuddy.com/porterbuddy-checkout.js" src_type="url"/>
+        <css src="https://widget.porterbuddy.com/porterbuddy-checkout.css" src_type="url" rel="stylesheet" type="text/css"/>
+
+    </head>
     <body>
-        <!-- only for klarna/m2-checkout:3.0 -->
+        <!-- only for klarna/m2-checkout:7.0 -->
         <referenceBlock name="checkout.root">
             <arguments>
                 <argument name="jsLayout" xsi:type="array">
                     <item name="components" xsi:type="array">
                         <item name="checkout" xsi:type="array">
                             <item name="children" xsi:type="array">
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="porterbuddy-shipping-widget" xsi:type="array">
+                                            <item xsi:type="string" name="component">Porterbuddy_Porterbuddy/js/shipping</item>
+                                            <item name="displayArea" xsi:type="string">steps</item>
+                                            <item name="sortOrder" xsi:type="string">0</item>
+                                            <item name="provider" xsi:type="string">checkoutProvider</item>
+                                        </item>
+                                    </item>
+                                </item>
                                 <item name="sidebar" xsi:type="array">
                                     <item name="children" xsi:type="array">
                                         <item name="klarna_shipping" xsi:type="array">
-                                            <item name="children" xsi:type="array">
-                                                <item name="shippingAdditional" xsi:type="array">
-                                                    <item name="component" xsi:type="string">uiComponent</item>
-                                                    <item name="displayArea" xsi:type="string">shippingAdditional</item>
-                                                    <item name="children" xsi:type="array">
-                                                        <item name="porterbuddy" xsi:type="array">
-                                                            <item name="component" xsi:type="string">porterbuddyCheckoutWidget</item>
-                                                            <item name="children" xsi:type="array">
-                                                                <item name="header-before" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">uiComponent</item>
-                                                                    <item name="displayArea" xsi:type="string">header-before</item>
-                                                                    <item name="children" xsi:type="array">
-                                                                        <!-- additional fields -->
-                                                                    </item>
-                                                                </item>
-                                                                <item name="header-after" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">uiComponent</item>
-                                                                    <item name="displayArea" xsi:type="string">header-after</item>
-                                                                    <item name="children" xsi:type="array">
-                                                                        <!-- additional fields -->
-                                                                    </item>
-                                                                </item>
-                                                                <item name="footer-before" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">uiComponent</item>
-                                                                    <item name="displayArea" xsi:type="string">footer-before</item>
-                                                                    <item name="children" xsi:type="array">
-                                                                        <!-- additional fields -->
-                                                                    </item>
-                                                                </item>
-                                                                <item name="footer-after" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">uiComponent</item>
-                                                                    <item name="displayArea" xsi:type="string">footer-after</item>
-                                                                    <item name="children" xsi:type="array">
-                                                                        <!-- additional fields -->
-                                                                    </item>
-                                                                </item>
-                                                            </item>
-                                                        </item>
-                                                    </item>
-                                                </item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="componentDisabled" xsi:type="boolean">true</item>
                                             </item>
                                         </item>
+
                                     </item>
                                 </item>
                             </item>

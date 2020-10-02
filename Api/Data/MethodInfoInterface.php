@@ -98,4 +98,15 @@ interface MethodInfoInterface
      * @return $this
      */
     public function setLabel($timeslotLabel);
+
+    /**
+     * @return
+     */
+    public function getWindows();
+
+    /**
+     * @param $windows
+     * @return $this
+     */
+    public function setWindows($windows);
 }
