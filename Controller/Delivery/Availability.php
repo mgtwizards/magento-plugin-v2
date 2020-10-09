@@ -157,7 +157,7 @@ class Availability extends \Magento\Framework\App\Action\Action
                 $messages = "inventory stock null";
             }
         } else {
-            $messages = $e->getLogMessage() . " " . $product->getSku() . " " . $product->getTypeId();
+            $messages = __("MSI not supported: ") . $product->getSku() . " " . $product->getTypeId();
             //probably just means MSI not supported here.
         }
 
