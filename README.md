@@ -9,6 +9,8 @@ Porterbuddy Magento 2
 - email alerts when shipment submit fails
 
 Supported Magento versions:
+- 2.4
+- 2.3
 - 2.2
 - 2.1
 - 2.0 (*-patch branch with system.xml compatibility fixes - don't use `canRestore` attribute)
@@ -42,23 +44,3 @@ Magento requires these fields pupulated in order to submit shipment:
 - Sales > Shipping Settings > Origin: - country, region, postal code, city, street
 
 
-## Enabling IP based postcode lookup
-
-1. Enable Tobai Geoip2 module in Magento
-
-    ```
-    bin/magento module:enable Tobai_GeoIp2
-    bin/magento setup:upgrade
-    ```
-
-1. Enable and download Geoip2 city database
-
-    - Go to Stores > Configuration > Tobai > GeoIP2 > GeoIP2Lite databases update
-    - Choose Database For Update - City database
-    - Save Config
-    - Click "Update" button
-
-1. Enable IP discovery in Porterbuddy settings
-
-    Stores > Configuration > Sales > Shipping Methods > Porterbuddy > Location Discovery -
-    IP location lookup
