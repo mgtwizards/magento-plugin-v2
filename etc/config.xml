@@ -23,14 +23,14 @@
                 <timeslot_cutoff>1</timeslot_cutoff>
                 <timeslot_window>2</timeslot_window>
                 <asap_cutoff>1</asap_cutoff>
-                <porterbuddy_until>22:00</porterbuddy_until>
-                <hours_mon>00:00,24:00</hours_mon>
-                <hours_tue>00:00,24:00</hours_tue>
-                <hours_wed>00:00,24:00</hours_wed>
-                <hours_thu>00:00,24:00</hours_thu>
-                <hours_fri>00:00,24:00</hours_fri>
-                <hours_sat>00:00,24:00</hours_sat>
-                <hours_sun>00:00,24:00</hours_sun>
+                <porterbuddy_until>0</porterbuddy_until>
+                <hours_mon>08:00,16:00</hours_mon>
+                <hours_tue>08:00,16:00</hours_tue>
+                <hours_wed>08:00,16:00</hours_wed>
+                <hours_thu>08:00,16:00</hours_thu>
+                <hours_fri>08:00,16:00</hours_fri>
+                <hours_sat>00:00,00:00</hours_sat>
+                <hours_sun>00:00,00:00</hours_sun>
                 <require_signature_default>0</require_signature_default>
                 <id_check_default>0</id_check_default>
                 <only_to_recipient_default>0</only_to_recipient_default>
@@ -46,7 +46,7 @@
                 <maps_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <default_phone_code>+47</default_phone_code>
                 <packager_mode>per_item</packager_mode>
-                <packing_time>15</packing_time>
+                <packing_time>0</packing_time>
                 <weight_unit>KILOGRAM</weight_unit>
                 <dimension_unit>CENTIMETER</dimension_unit>
                 <error_email_enabled>1</error_email_enabled>
