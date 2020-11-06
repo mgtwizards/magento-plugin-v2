@@ -56,7 +56,7 @@ define([
         internal: false,
         selectedDate: null,
         refreshIntervalId: null,
-        availabilityRequest: null,
+        availabilityResponse: null,
         shippingTable: null,
 
         // observable
@@ -76,7 +76,7 @@ define([
                 this.processNewRates(rates);
 
                 if(window.updateDeliveryWindows) {
-                    window.updateDeliveryWindows(this.availabilityRequest);
+                    window.updateDeliveryWindows(this.availabilityResponse);
                 }
             }.bind(this));
 
@@ -108,7 +108,7 @@ define([
                 token: checkoutConfig.publicKey,
                 apiMode: checkoutConfig.apiMode,
                 view: 'checkout',
-                availabilityRequest: this.availabilityRequest,
+                availabilityResponse: this.availabilityResponse,
                 updateDeliveryWindowsInterval: checkoutConfig.refreshOptionsTimeout*60,
                 discount: this.discount * 100,
                 showLeaveAtDoorstep: this.leaveDoorstepEnabled,
@@ -205,8 +205,8 @@ define([
             if (window.$previousSelectedTimeslot != null){
                 window.porterbuddy.initialSelectedWindow = {'product': window.$previousSelectedTimeslot().product, 'start': window.$previousSelectedTimeslot().start, 'end': window.$previousSelectedTimeslot().end}
             }else{
-                if(this.availabilityRequest && this.availabilityRequest.deliveryWindows && this.availabilityRequest.deliveryWindows > 0){
-                    window.porterbuddy.initialSelectedWindow = this.availabilityRequest.deliveryWindows[0]
+                if(this.availabilityResponse && this.availabilityResponse.deliveryWindows && this.availabilityResponse.deliveryWindows > 0){
+                    window.porterbuddy.initialSelectedWindow = this.availabilityResponse.deliveryWindows[0]
                 }
             }
 
@@ -225,7 +225,7 @@ define([
                 this.visible(false);
                 return;
             }
-            this.availabilityRequest = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
+            this.availabilityResponse = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
             if(!window.porterbuddy){
                 this.initWidget();
             }
