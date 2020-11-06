@@ -56,7 +56,7 @@ define([
         internal: false,
         selectedDate: null,
         refreshIntervalId: null,
-        deliveryWindows: null,
+        availabilityRequest: null,
         shippingTable: null,
 
         // observable
@@ -76,7 +76,7 @@ define([
                 this.processNewRates(rates);
 
                 if(window.updateDeliveryWindows) {
-                    window.updateDeliveryWindows(this.deliveryWindows);
+                    window.updateDeliveryWindows(this.availabilityRequest);
                 }
             }.bind(this));
 
@@ -102,13 +102,13 @@ define([
 
 
         initWidget: function(){
-            console.log("inside init widget!");
+
+
             window.porterbuddy = {
                 token: checkoutConfig.publicKey,
                 apiMode: checkoutConfig.apiMode,
                 view: 'checkout',
-                deliveryWindows: this.deliveryWindows,
-                initialSelectedWindow: ( window.$previousSelectedTimeslot != null ? {'product': window.$previousSelectedTimeslot().product, 'start': window.$previousSelectedTimeslot().start, 'end': window.$previousSelectedTimeslot().end} : undefined ),
+                availabilityRequest: this.availabilityRequest,
                 updateDeliveryWindowsInterval: checkoutConfig.refreshOptionsTimeout*60,
                 discount: this.discount * 100,
                 showLeaveAtDoorstep: this.leaveDoorstepEnabled,
@@ -126,12 +126,13 @@ define([
                         }
                     }
                 }.bind(this),
-                onUpdateDeliveryWindows: function(callback) {
+                onUpdateDeliveryWindows: function(callback, additionalInfo) {
                     jQuery.ajax(mageUrl.build('porterbuddy/delivery/timeslots'), {
                         type: 'post',
                         dataType: 'json',
                         data: {
                             form_key: $.mage.cookies.get('form_key'),
+                            additional_info: additionalInfo,
                             refresh: true
                         }
                     })
@@ -200,7 +201,15 @@ define([
 
                 }
 
+            };
+            if (window.$previousSelectedTimeslot != null){
+                window.porterbuddy.initialSelectedWindow = {'product': window.$previousSelectedTimeslot().product, 'start': window.$previousSelectedTimeslot().start, 'end': window.$previousSelectedTimeslot().end}
+            }else{
+                if(this.availabilityRequest && this.availabilityRequest.deliveryWindows && this.availabilityRequest.deliveryWindows > 0){
+                    window.porterbuddy.initialSelectedWindow = this.availabilityRequest.deliveryWindows[0]
+                }
             }
+
         },
 
 
@@ -216,7 +225,7 @@ define([
                 this.visible(false);
                 return;
             }
-            this.deliveryWindows = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
+            this.availabilityRequest = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
             if(!window.porterbuddy){
                 this.initWidget();
             }

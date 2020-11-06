@@ -194,8 +194,15 @@ class Peritem implements PackagerInterface
      * @param bool $useDefaults
      * @return array [width, length, height]
      */
-    public function getDimensions(\Magento\Catalog\Model\Product $product, $useDefaults = true)
+    public function getDimensions(\Magento\Catalog\Model\Product $product)
     {
+
+        $returnDimensions = [
+            'width' => $this->helper->getDefaultProductWidth(),
+            'length' => $this->helper->getDefaultProductLength(),
+            'height' => $this->helper->getDefaultProductHeight(),
+        ];
+
         $definedDimensions = [
             'width' => $this->getAttributeValue($product, $this->helper->getWidthAttribute()),
             'length' => $this->getAttributeValue($product, $this->helper->getLengthAttribute()),
@@ -204,15 +211,14 @@ class Peritem implements PackagerInterface
 
         $definedDimensions = array_filter($definedDimensions);
 
-        if ($useDefaults) {
-            $definedDimensions += [
-                'width' => $this->helper->getDefaultProductWidth(),
-                'length' => $this->helper->getDefaultProductLength(),
-                'height' => $this->helper->getDefaultProductHeight(),
-            ];
-        }
+        $returnDimensions += $definedDimensions;
 
-        return $definedDimensions;
+        $returnDimensions = [
+            'width' => $this->helper->convertDimensionToCm($returnDimensions['width']),
+            'length' => $this->helper->convertDimensionToCm($returnDimensions['length']),
+            'height' => $this->helper->convertDimensionToCm($returnDimensions['height']),
+        ];
+        return $returnDimensions;
     }
 
     /**

@@ -87,7 +87,8 @@ define([
             }
             var hasDefault = false;
             if (rates.porterbuddy && rates.porterbuddy.length > 0) {
-                var deliveryWindows = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
+                var availabilityResponse = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
+                var deliveryWindows = availabilityResponse.deliveryWindows;
                 var porterbuddyOption = {
                     id: rates.porterbuddy[0].carrier_code,
                     name: rates.porterbuddy[0].carrier_title,
@@ -270,13 +271,13 @@ define([
                 if(data.error){
                     console.error(data.message);
                 }else {
-                    if(!data.timeslots || data.timeslots.length == 0){
+                    if(!data.timeslots || !data.timeslots.deliveryWindows || data.timeslots.deliveryWindows.length === 0){
                         pbRateFilter.getRateCacheDisabled()(true);
                         // see shipping-rate-service
                         quote.shippingAddress.valueHasMutated();
                         pbRateFilter.getRateCacheDisabled()(false);
                     }
-                    callback({deliveryWindows:data.timeslots, discount: window.checkoutConfig.porterbuddy.discount * 100});
+                    callback({deliveryWindows:data.timeslots.deliveryWindows, discount: window.checkoutConfig.porterbuddy.discount * 100});
                 }
             });
         },

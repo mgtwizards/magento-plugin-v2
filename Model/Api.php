@@ -91,7 +91,7 @@ class Api
 
         if (isset($data['deliveryWindows'])) {
             $this->logger->debug(__FUNCTION__ . ' success', $logData);
-            return $data['deliveryWindows'];
+            return $data;
         }
 
         $message = __('Get availability options error');

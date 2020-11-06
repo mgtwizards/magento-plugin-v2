@@ -83,7 +83,7 @@ class QuoteSubmitPrepareOrder implements \Magento\Framework\Event\ObserverInterf
         $token = '';
         $options = $this->session->getPbOptions();
         $methodInfo = $this->helper->parseMethod($order->getShippingMethod());
-        foreach( $options as $option) {
+        foreach( $options['deliveryWindows'] as $option) {
             if($option['product'] == $methodInfo->getType() &&
                 $option['start'] == $methodInfo->getStart() &&
                 $option['end'] == $methodInfo->getEnd()){

@@ -316,8 +316,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 $this->session->setPbOptions($options);
                 $refreshTime = new \DateTime("now");
                 $refreshTime->add(new \DateInterval('P0DT0H1M0S'));
-                if($options && $options[0]){
-                    $expirytime = new \DateTime($options[0]['expiresAt']);
+                if($options && $options['deliveryWindows'] && $options['deliveryWindows'][0]){
+                    $expirytime = new \DateTime($options['deliveryWindows'][0]['expiresAt']);
                     $refreshTime = $refreshTime > $expirytime?$expirytime:$refreshTime;
                 }
                 $pbPreviousRequest = array( 'request' => $pbCurrentRequest, 'expiry' => $refreshTime );
@@ -336,7 +336,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $expressOptions = []; // no return + with return
         $scheduledOptions = [];
 
-        foreach ($options as $option) {
+        foreach ($options['deliveryWindows'] as $option) {
             if (in_array($option['product'], [self::METHOD_EXPRESS, self::METHOD_EXPRESS_RETURN])) {
                 $expressOptions[] = $option;
             } elseif (in_array($option['product'], [self::METHOD_DELIVERY, self::METHOD_DELIVERY_RETURN])) {
