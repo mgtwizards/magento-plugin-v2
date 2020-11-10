@@ -13,6 +13,7 @@ define([
     'Magento_Checkout/js/model/shipping-service',
     'Magento_Checkout/js/action/select-shipping-method',
     'Magento_Checkout/js/checkout-data',
+    'Magento_Checkout/js/action/set-shipping-information',
     'mage/url',
     'Magento_Catalog/js/price-utils',
     'mage/cookies'
@@ -27,6 +28,7 @@ define([
     shippingService,
     selectShippingMethodAction,
     checkoutData,
+    setShippingInformation,
     mageUrl,
     priceUtils
 ) {
@@ -234,13 +236,15 @@ define([
             this.timeslotsByValue = {};
 
             _.each(rates.porterbuddy, function (rate) {
-                var code = rate.carrier_code + '_' + rate.method_code;
-                var timeslot = _.extend({}, rate.extension_attributes.porterbuddy_info, {
-                    value: code,
-                    price: priceUtils.formatPrice(rate.price_incl_tax, quote.getPriceFormat()), // TODO: incl/excl tax
-                    method: rate
-                });
-                this.timeslotsByValue[code] = ko.observable(timeslot);
+                if(rate.method_code != 'donor') {
+                    var code = rate.carrier_code + '_' + rate.method_code;
+                    var timeslot = _.extend({}, rate.extension_attributes.porterbuddy_info, {
+                        value: code,
+                        price: priceUtils.formatPrice(rate.price_incl_tax, quote.getPriceFormat()), // TODO: incl/excl tax
+                        method: rate
+                    });
+                    this.timeslotsByValue[code] = ko.observable(timeslot);
+                }
             }.bind(this));
 
 
@@ -323,7 +327,7 @@ define([
         selectShippingMethod: function (shippingMethod) {
             selectShippingMethodAction(shippingMethod);
             checkoutData.setSelectedShippingRate(shippingMethod['carrier_code'] + '_' + shippingMethod['method_code']);
-
+            setShippingInformation();
             return true;
         },
 
