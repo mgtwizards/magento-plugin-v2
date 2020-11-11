@@ -60,6 +60,7 @@ define([
         refreshIntervalId: null,
         availabilityResponse: null,
         shippingTable: null,
+        defaultWindow: null,
 
         // observable
         visible: ko.observable(false),
@@ -110,6 +111,7 @@ define([
                 token: checkoutConfig.publicKey,
                 apiMode: checkoutConfig.apiMode,
                 view: 'checkout',
+                showLogo: false,
                 availabilityResponse: this.availabilityResponse,
                 updateDeliveryWindowsInterval: checkoutConfig.refreshOptionsTimeout*60,
                 discount: this.discount * 100,
@@ -234,9 +236,10 @@ define([
             window.pbHasWindows(true);
 
             this.timeslotsByValue = {};
-
+            var first = true;
             _.each(rates.porterbuddy, function (rate) {
                 if(rate.method_code != 'donor') {
+
                     var code = rate.carrier_code + '_' + rate.method_code;
                     var timeslot = _.extend({}, rate.extension_attributes.porterbuddy_info, {
                         value: code,
@@ -244,6 +247,10 @@ define([
                         method: rate
                     });
                     this.timeslotsByValue[code] = ko.observable(timeslot);
+                    if(first){
+                        this.defaultWindow = this.timeslotsByValue[code];
+                        first = false;
+                    }
                 }
             }.bind(this));
 
@@ -262,7 +269,7 @@ define([
                 timeslot = window.$previousSelectedTimeslot;
             }else {
 
-                timeslot = _.values(this.timeslotsByValue)[0];
+                timeslot = this.defaultWindow;
             }
             window.pbSetSelectedDeliveryWindow({'product': timeslot().type, 'start': timeslot().start, 'end': timeslot().end});
             this.selectShippingMethod(timeslot().method);
