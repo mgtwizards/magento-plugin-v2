@@ -107,6 +107,11 @@
                     <label>Collect In Store Title</label>
                     <comment>Title for Collect in store on checkout widge</comment>
                 </field>
+                <field id="rates_table" translate="label" type="text" sortOrder="308" showInDefault="1" showInStore="1" showInWebsite="1" >
+                    <label>Shipping Rates Mapping</label>
+                    <frontend_model>Porterbuddy\Porterbuddy\Model\Config\Source\RatesTable</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
                 <field id="preselect_location" translate="label" type="select" sortOrder="319" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Prefill location - postcode and city</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

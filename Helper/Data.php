@@ -126,6 +126,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_MAPS_API_KEY = 'carriers/porterbuddy/maps_api_key';
     const XML_PATH_DEBUG = 'carriers/porterbuddy/debug';
 
+    const XML_PATH_RATES= 'carriers/porterbuddy/rates_table';
+
+
     const SHIPMENT_CREATOR_CRON = 'CRON';
 
     /**
@@ -144,21 +147,29 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $methodInfoFactory;
 
     /**
+     * @var \Magento\Framework\View\Asset\Repository
+     */
+    protected  $assetRepo;
+
+    /**
      * @var \Magento\Tax\Helper\Data
      */
     protected $taxHelper;
+
 
     public function __construct(
         Context $context,
         \Magento\Framework\Locale\Format $localeFormat,
         \Magento\Framework\Math\Random $mathRandom,
         \Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterfaceFactory $methodInfoFactory,
+        \Magento\Framework\View\Asset\Repository $assetRepo,
         \Magento\Tax\Helper\Data $taxHelper
     ) {
         parent::__construct($context);
         $this->localeFormat = $localeFormat;
         $this->mathRandom = $mathRandom;
         $this->methodInfoFactory = $methodInfoFactory;
+        $this->assetRepo = $assetRepo;
         $this->taxHelper = $taxHelper;
     }
 
@@ -942,6 +953,32 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->scopeConfig->getValue(self::XML_PATH_MAPS_API_KEY, ScopeInterface::SCOPE_STORE);
     }
+
+
+    /**
+     * Discounts
+     *
+     * @return array
+     */
+    public function getRates()
+    {
+        $rates = array();
+        $configRates = $this->scopeConfig->getValue(self::XML_PATH_RATES);
+        $configRates = $this->unserialize($configRates);
+        foreach($configRates as $row){
+            if(isset($row['carrier_code'])){
+                $_thisRow = (array)$row;
+                if(isset($_thisRow['logo_url']) && strlen($_thisRow['logo_url']) > 0 && strpos($_thisRow['logo_url'], 'http', 0) !== 0){
+                    $_thisRow['logo_url'] =  $this->assetRepo->getUrl($_thisRow['logo_url']);
+                }
+                $rates[] = $_thisRow;
+
+            }
+        }
+
+        return $rates;
+    }
+
 
     // END CONFIG SECTION
 

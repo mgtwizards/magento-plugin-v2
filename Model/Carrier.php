@@ -57,6 +57,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     const AVAILABILITY_ONLY_AVAILABLE = 'only_available';
     const AVAILABILITY_ALWAYS = 'always';
 
+    const RATE_TYPE_HOME = 'home_delivery';
+    const RATE_TYPE_PICKUP_POINT = 'pickup_point';
+    const RATE_TYPE_IN_STORE = 'collect_in_store';
 
     const COOKIE = 'porterbuddy_location';
 

@@ -1,12 +1,25 @@
 define([
-], function () {
+    'underscore'
+], function (_) {
     'use strict';
+
+    var checkoutConfig = window.checkoutConfig.porterbuddy;
+    var shippingRates = checkoutConfig.shippingRates;
+
     return {
         HOME_DELIVERY: 'home_delivery',
         PICKUP_POINT: 'pickup_point',
         COLLECT_IN_STORE: 'collect_in_store',
         processRate: function(rate){
-            var type = this.getRateType(rate);
+            var configEntry = _.findWhere(shippingRates, {carrierCode: rate.carrier_code, rateCode: rate.method_code});
+            if(!configEntry){
+                configEntry = _.findWhere(shippingRates, {carrierCode: rate.carrier_code, rateCode: ""});
+            }
+            if(!configEntry){
+                //no config for this option, so we don't show it
+                return
+            }
+            var type = configEntry.rate_type;
             var rateData =  {
                 id: rate.carrier_code,
                 name: rate.carrier_title,
@@ -14,10 +27,9 @@ define([
                     fractionalDenomination: 100 * rate.amount,
                     currency: 'NOK'
                 },
-                minDeliveryDays: 2,
-                maxDeliveryDays: 5,
-                //logoUrl: "",
-                //description: "",
+                minDeliveryDays: configEntry.min_delivery_days,
+                maxDeliveryDays: configEntry.max_delivery_days,
+                description: configEntry.description,
                 additionalData: {
                     //the additional data fields below are required!
                     type: type,
@@ -26,10 +38,13 @@ define([
                 },
                 showRate: true
             };
-            var locations = this.getPickupLocations(rate, type);
-            if(locations.length > 0){
-                rateData.locations = locations;
-            }
+            if(configData.logo_url && configData.logo_url.length > 0)
+                rateData.logoUrl = configData.logo_url;
+
+            // var locations = this.getPickupLocations(rate, type);
+            // if(locations.length > 0){
+            //     rateData.locations = locations;
+            // }
             return rateData;
         },
         selectRate: function(rate, location, type){

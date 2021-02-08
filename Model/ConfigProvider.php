@@ -60,6 +60,7 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
                 'homeDeliveryTitle' => $this->helper->getHomeDeliveryTitle(),
                 'pickupPointTitle' => $this->helper->getPickupPointTitle(),
                 'collectInStoreTitle' => $this->helper->getCollectInStoreTitle(),
+                'shippingRates' => $this->helper->getRates(),
                 'preselectLocation' => $this->helper->isPreselectLocation(),
                 'leaveDoorstepEnabled' => $this->helper->isLeaveDoorstepEnabled(),
                 'leaveDoorstepText' => $this->helper->getLeaveDoorstepText(),
