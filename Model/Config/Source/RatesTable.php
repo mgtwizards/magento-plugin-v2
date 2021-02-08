@@ -21,8 +21,7 @@ class RatesTable extends AbstractFieldArray
             'size' => '50px'
         ));
         $this->addColumn('rate_type', array(
-            'label' => __('Rate Type'),
-            'renderer' => $this->getRateType(),
+            'label' => __('Rate Type')
         ));
         $this->addColumn('min_delivery_days', array(
             'label' => __('Min Delivery Days'),

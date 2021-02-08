@@ -17,7 +17,7 @@ define([
             }
             if(!configEntry){
                 //no config for this option, so we don't show it
-                return
+                return { showRate: false };
             }
             var type = configEntry.rate_type;
             var rateData =  {
