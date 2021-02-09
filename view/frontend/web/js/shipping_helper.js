@@ -11,9 +11,9 @@ define([
         PICKUP_POINT: 'pickup_point',
         COLLECT_IN_STORE: 'collect_in_store',
         processRate: function(rate){
-            var configEntry = _.findWhere(shippingRates, {carrierCode: rate.carrier_code, rateCode: rate.method_code});
+            var configEntry = _.findWhere(shippingRates, {carrier_code: rate.carrier_code, rate_code: rate.method_code});
             if(!configEntry){
-                configEntry = _.findWhere(shippingRates, {carrierCode: rate.carrier_code, rateCode: ""});
+                configEntry = _.findWhere(shippingRates, {carrier_code: rate.carrier_code, rate_code: ""});
             }
             if(!configEntry){
                 //no config for this option, so we don't show it
