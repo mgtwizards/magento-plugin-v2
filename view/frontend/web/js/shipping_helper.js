@@ -38,8 +38,8 @@ define([
                 },
                 showRate: true
             };
-            if(configData.logo_url && configData.logo_url.length > 0)
-                rateData.logoUrl = configData.logo_url;
+            if(configEntry.logo_url && configEntry.logo_url.length > 0)
+                rateData.logoUrl = configEntry.logo_url;
             if(configEntry.description && configEntry.description.length > 0){
                 rateData.description = configEntry.description
             }
