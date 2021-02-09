@@ -22,14 +22,14 @@ define([
             var type = configEntry.rate_type;
             var rateData =  {
                 id: rate.carrier_code,
-                name: rate.carrier_title,
+                name: rate.method_title,
                 price: {
                     fractionalDenomination: 100 * rate.amount,
                     currency: 'NOK'
                 },
                 minDeliveryDays: configEntry.min_delivery_days,
                 maxDeliveryDays: configEntry.max_delivery_days,
-                description: configEntry.description,
+                description: rate.carrier_title,
                 additionalData: {
                     //the additional data fields below are required!
                     type: type,
@@ -40,7 +40,9 @@ define([
             };
             if(configData.logo_url && configData.logo_url.length > 0)
                 rateData.logoUrl = configData.logo_url;
-
+            if(configEntry.description && configEntry.description.length > 0){
+                rateData.description = configEntry.description
+            }
             // var locations = this.getPickupLocations(rate, type);
             // if(locations.length > 0){
             //     rateData.locations = locations;

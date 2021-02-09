@@ -963,9 +963,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getRates()
     {
         $rates = array();
-        $configRates = $this->scopeConfig->getValue(self::XML_PATH_RATES);
+        $configRates = $this->scopeConfig->getValue(self::XML_PATH_RATES, ScopeInterface::SCOPE_STORE);
         $configRates = $this->unserialize($configRates);
-        foreach($configRates as $row){
+        foreach ((array)$configRates as $row) {
             if(isset($row['carrier_code'])){
                 $_thisRow = (array)$row;
                 if(isset($_thisRow['logo_url']) && strlen($_thisRow['logo_url']) > 0 && strpos($_thisRow['logo_url'], 'http', 0) !== 0){
