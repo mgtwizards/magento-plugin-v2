@@ -15,7 +15,7 @@ define([
     'Magento_Checkout/js/model/shipping-service',
     'Magento_Checkout/js/model/quote',
     'Klarna_Kco/js/action/select-shipping-method',
-    'Klarna_Kco/js/model/klarna',
+    'Klarna_Kco/js/model/iframe',
     'mage/storage',
     'mage/url',
 ], function (
