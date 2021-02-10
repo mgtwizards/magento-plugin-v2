@@ -431,7 +431,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $method->setCarrierTitle($this->helper->getTitle());
 
         $method->setMethod($methodCode);
-        $method->setMethodTitle($methodTitle); // $this->helper->getScheduledName()
+        $method->setMethodTitle($this->helper->getTitle() . " " . $methodTitle); // $this->helper->getScheduledName()
         //$method->setMethodDescription($this->helper->getScheduledDescription());
 
         if ($request->getFreeShipping() === true) {
