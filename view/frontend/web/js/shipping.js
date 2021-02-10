@@ -92,6 +92,10 @@ define([
             if(address && address.postcode && address.postcode.length > 0){
                 hasPostcode = true;
             }
+            var hasFullAddress = false;
+            if (address && address.street && address.street.length > 0){
+                hasFullAddress = true;
+            }
             var hasDefault = false;
             if (rates.porterbuddy && rates.porterbuddy.length > 0) {
                 var availabilityResponse = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
@@ -171,6 +175,8 @@ define([
                     pickupPointOptions: pickupPointRates,
                     storeOptions: collectInStoreRates,
                     showPostCodeInput: true,
+                    postCodeEditable: !hasFullAddress,
+                    storedPostCodeDelay: 500,
                     recipientInfo: recipientInfo,
                     text: text,
                     onSelectionChanged: function (type, selectedShipping) {
@@ -181,6 +187,10 @@ define([
                         window.pbForceRefresh = callbacks.forceRefresh;
                         window.pbSetRecipientInfo = callbacks.setRecipientInfo;
                         window.pbRefreshShippingOptions = callbacks.refreshShippingOptions;
+                        if(window.pbDelayRefresh){
+                            window.pbDelayRefresh = false;
+                            window.pbRefreshShippingOptions();
+                        }
                     },
                     onPostCodeEntered: function(postcode) {
                         this.setPostcode(postcode);
@@ -232,13 +242,19 @@ define([
                 };
             }else{
                 if(!hasPostcode){
-                    window.pbSetRecipientInfo({postCode: ""});
-
+                    if(window.pbSetRecipientInfo) {
+                        window.pbSetRecipientInfo({postCode: ""});
+                    }
                 }
+                window.porterbuddy.postCodeEditable = !hasFullAddress;
                 window.porterbuddy.homeDeliveryOptions = homeDeliveryRates;
                 window.porterbuddy.pickupPointOptions = pickupPointRates;
                 window.porterbuddy.storeOptions = collectInStoreRates;
-                window.pbRefreshShippingOptions();
+                if(window.pbRefreshShippingOptions) {
+                    window.pbRefreshShippingOptions();
+                }else{
+                    window.pbDelayRefresh = true;
+                }
             }
         },
 
