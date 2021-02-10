@@ -18,7 +18,8 @@ define([
             textClickToSee: '',
             textDeliveryUnavailableTemplate: '',
             publicKey: '',
-            apiMode: ''
+            apiMode: '',
+            alternateAvailabilityView: false
         },
 
         _create: function () {
@@ -63,6 +64,7 @@ define([
                 token: this.options.publicKey,
                 view: 'availability',
                 apiMode: this.options.apiMode,
+                alternateAvailabilityView: this.options.alternateAvailabilityView,
                 text: {
                     availabilityPostcodeSuccess: this.options.availabilityText != null?this.options.availabilityText:undefined,
                     availabilityPostcodeError: this. options.textDeliveryUnavailableTemplate!=null?this.options.textDeliveryUnavailableTemplate:undefined,
