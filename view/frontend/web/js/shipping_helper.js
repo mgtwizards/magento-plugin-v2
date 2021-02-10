@@ -21,7 +21,7 @@ define([
             }
             var type = configEntry.rate_type;
             var rateData =  {
-                id: rate.carrier_code,
+                id: rate.carrier_code + '_' + rate.method_code,
                 name: rate.method_title,
                 price: {
                     fractionalDenomination: 100 * rate.amount,

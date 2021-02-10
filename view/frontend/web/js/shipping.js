@@ -18,6 +18,8 @@ define([
     'Klarna_Kco/js/model/iframe',
     'mage/storage',
     'mage/url',
+    'Klarna_Kco/js/action/update-klarna-order',
+    'Klarna_Kco/js/model/config',
 ], function (
     $,
     Component,
@@ -37,11 +39,14 @@ define([
     kcoShippingMethod,
     klarna,
     storage,
-    mageUrl
+    mageUrl,
+    updateKlarnaOrder,
+    kcoConfig
 ) {
     'use strict';
     var checkoutConfig = window.checkoutConfig.porterbuddy;
 
+    var updateInProgress = ko.observable(false);
 
     return Component.extend({
         defaults: {
@@ -55,6 +60,8 @@ define([
             template: 'Porterbuddy_Porterbuddy/klarna-shipping'
 
         },
+        updateInProgress: updateInProgress,
+
 
 
         initialize: function () {
@@ -256,7 +263,22 @@ define([
                 if(pbConfig.CARRIER_CODE !== selectedShipping.id){
                     pbShippingHelper.selectRate(selectedRate, selectedShipping.data?selectedShipping.data:null, selectedShipping.additionalData.type);
                 }
+                /**
+                 * This method is called more then 1 time. To avoid duplicated calculations, requests and other things
+                 * we're using the flag to know if there is currently a active process.
+                 */
+                if (updateInProgress()) {
+                    return true;
+                }
+
                 kcoShippingMethod(selectedRate);
+                updateInProgress(true);
+
+                storage.post(kcoConfig.methodUrl, JSON.stringify(selectedRate)).done(function() {
+                    updateInProgress(false);
+                    updateKlarnaOrder();
+                });
+
             }
         },
 
