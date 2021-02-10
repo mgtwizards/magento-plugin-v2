@@ -70,6 +70,10 @@
                     <label>Show Availibility Widget</label>
                     <source_model>Porterbuddy\Porterbuddy\Model\Config\Source\Availability</source_model>
                 </field>
+                <field id="availability_alternate_view" translate="label" type="select" sortOrder="156" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use alternate view</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="availability_text_click_to_see" translate="label tooltip" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Click to see text</label>
                 </field>

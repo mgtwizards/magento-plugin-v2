@@ -13,6 +13,7 @@ $helper = $block->getHelper();
             "porterbuddyAvailabilityWidget": {
                 "getAvailabilityURL": "<?= $block->getUrl('porterbuddy/delivery/availability') ?>",
                 "availabilityText": <?= json_encode($helper->getAvailabilityTemplate()) ?>,
+                "alternateAvailabilityView": <?= json_encode($helper->getAvailabilityAlternateView()) ?>,
                 "textClickToSee": <?= json_encode($helper->getAvailabilityTextClickToSee()) ?>,
                 "textDeliveryUnavailableTemplate": <?= json_encode($helper->getAvailabilityTextPostcodeError()) ?>,
                 "publicKey": <?= json_encode($helper->getPublicKey()) ?>,

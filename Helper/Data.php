@@ -34,6 +34,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_INBOUND_TOKEN = 'carriers/porterbuddy/inbound_token';
 
     const XML_PATH_SHOW_AVAILABILITY = 'carriers/porterbuddy/show_availability';
+    const XML_PATH_AVAILABILITY_ALTERNATE_VIEW = 'carriers/porterbuddy/availability_alternate_view';
     const XML_PATH_LOCATION_LINK_TEMPLATE = 'carriers/porterbuddy/location_link_template';
     const XML_PATH_AVAILABILITY_TEMPLATE = 'carriers/porterbuddy/availability_template';
     const XML_PATH_AVAILABILITY_TEXT_FETCHING = 'carriers/porterbuddy/availability_text_fetching';
@@ -357,6 +358,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_SHOW_AVAILABILITY, ScopeInterface::SCOPE_STORE);
     }
 
+
+    /**
+     * @return boolean
+     */
+    public function getAvailabilityAlternateView()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_AVAILABILITY_ALTERNATE_VIEW, ScopeInterface::SCOPE_STORE);
+    }
 
     /**
      * Delivery availability template text

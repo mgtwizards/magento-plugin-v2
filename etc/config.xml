@@ -16,6 +16,7 @@
                 <description>Simple and flexible. You decide when and where delivery will take place, at home, at work or elsewhere.</description>
                 <asap_name>Express shipping</asap_name>
                 <show_availability>only_available</show_availability>
+                <availability_alternate_view>0</availability_alternate_view>
                 <availability_auto_update_composite>1</availability_auto_update_composite>
                 <days_ahead>7</days_ahead>
                 <preselect_location>1</preselect_location>
