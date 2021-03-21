@@ -5,6 +5,7 @@
  */
 namespace Porterbuddy\Porterbuddy\Model;
 
+use Magento\Framework\Registry;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Shipment\ShipmentValidatorInterface;
 use Magento\Sales\Model\Order\Shipment\Validation\QuantityValidator;
@@ -46,12 +47,19 @@ class Shipment
     protected $transactionFactory;
 
     /**
+     * @var Registry
+     */
+    private $registry;
+
+    /**
      * @param \Porterbuddy\Porterbuddy\Helper\Data $helper
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Sales\Model\OrderFactory $salesOrderFactory
      * @param \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader $shipmentLoader
      * @param ShipmentValidatorInterface $shipmentValidator
      * @param \Magento\Framework\DB\TransactionFactory $transactionFactory
+     * @param Registry $registry
+
      */
     public function __construct(
         \Porterbuddy\Porterbuddy\Helper\Data $helper,
@@ -59,7 +67,8 @@ class Shipment
         \Magento\Sales\Model\OrderFactory $salesOrderFactory,
         \Magento\Shipping\Controller\Adminhtml\Order\ShipmentLoader $shipmentLoader,
         ShipmentValidatorInterface $shipmentValidator,
-        \Magento\Framework\DB\TransactionFactory $transactionFactory
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
+        Registry $registry
     ) {
         $this->helper = $helper;
         $this->logger = $logger;
@@ -67,6 +76,7 @@ class Shipment
         $this->shipmentLoader = $shipmentLoader;
         $this->shipmentValidator = $shipmentValidator;
         $this->transactionFactory = $transactionFactory;
+        $this->registry = $registry;
     }
 
     /**
@@ -91,7 +101,12 @@ class Shipment
             $this->shipmentLoader->setShipmentId(null);
             $this->shipmentLoader->setShipment(null);
             $this->shipmentLoader->setTracking(null);
-            $shipment = $this->shipmentLoader->load();
+            try {
+                $shipment = $this->shipmentLoader->load();
+            }catch(\RuntimeException $e){
+                $this->registry->unregister('current_shipment');
+                $shipment = $this->shipmentLoader->load();
+            }
 
             // shipment->getOrder is a separate order model copy
             $shipmentOrder = $shipment->getOrder();
