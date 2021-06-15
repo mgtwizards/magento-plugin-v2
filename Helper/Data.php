@@ -52,6 +52,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const XML_PATH_PACKAGER_MODE = 'carriers/porterbuddy/packager_mode';
     const XML_PATH_INVENTORY_STOCK = 'carriers/porterbuddy/inventory_stock';
     const XML_PATH_PACKING_TIME = 'carriers/porterbuddy/packing_time';
+    const XML_PATH_USE_DONOR = 'carriers/porterbuddy/use_donor';
     const XML_PATH_PRESELECT_LOCATION = 'carriers/porterbuddy/preselect_location';
     const XML_PATH_RETURN_ENABLED = 'carriers/porterbuddy/return_enabled';
     const XML_PATH_DAYS_AHEAD = 'carriers/porterbuddy/days_ahead';
@@ -338,6 +339,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getPackingTime()
     {
         return (float)$this->scopeConfig->getValue(self::XML_PATH_PACKING_TIME, ScopeInterface::SCOPE_WEBSITES);
+    }
+
+    /**
+     * Returns use donor
+     *
+     * @return bool
+     */
+    public function getUseDonor()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_USE_DONOR, ScopeInterface::SCOPE_WEBSITES);
     }
 
     /**

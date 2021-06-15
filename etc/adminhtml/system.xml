@@ -290,6 +290,10 @@
                 <field id="packing_time" translate="label" type="text" sortOrder="850" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Packing time, minutes</label>
                 </field>
+                <field id="use_donor" translate="label" type="select" sortOrder="860" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Use Donor Rate in Checkout</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
 
                 <field id="heading_default_verifications" translate="label" type="text" sortOrder="900" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Verifications - default settings</label>

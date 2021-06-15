@@ -293,6 +293,8 @@ define([
                 storage.post(kcoConfig.methodUrl, JSON.stringify(selectedRate)).done(function() {
                     updateInProgress(false);
                     updateKlarnaOrder();
+                }).fail(function(){
+                    updateInProgress(false);
                 });
 
             }

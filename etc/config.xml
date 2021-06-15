@@ -66,6 +66,7 @@
                 <address_warning_title>Leveringsalternativ</address_warning_title>
                 <address_warning_text>Fyll ut postnummer for å velge leveringslternativ</address_warning_text>
                 <address_warning_close_label>Lukk</address_warning_close_label>
+                <use_donor>0</use_donor>
             </porterbuddy>
         </carriers>
     </default>

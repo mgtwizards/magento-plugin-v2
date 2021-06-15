@@ -380,18 +380,20 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $result = $this->applyDiscounts($discountAmount, $result);
 
 
-        $donorRate = $this->rateMethodFactory->create();
+        if($this->helper->getUseDonor()) {
+            $donorRate = $this->rateMethodFactory->create();
 
-        $donorRate->setCarrier(self::CODE);
-        $donorRate->setCarrierTitle($this->helper->getTitle());
+            $donorRate->setCarrier(self::CODE);
+            $donorRate->setCarrierTitle($this->helper->getTitle());
 
-        $donorRate->setMethod("donor");
-        $donorRate->setMethodTitle("Porterbuddy");
+            $donorRate->setMethod("donor");
+            $donorRate->setMethodTitle("Porterbuddy");
 
-        $donorRate->setPrice(0);
-        $donorRate->setCost(0);
+            $donorRate->setPrice(0);
+            $donorRate->setCost(0);
 
-        $result->append($donorRate);
+            $result->append($donorRate);
+        }
 
         // enable to construct new result object
         $transport = new DataObject(['result' => $result]);
@@ -744,7 +746,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         $shipment = $request->getOrderShipment();
         $order = $shipment->getOrder();
-        $methodInfo = $this->helper->parseMethod($request->getShippingMethod());
+        $method = $request->getShippingMethod();
+        $methodInfo = $this->helper->parseMethod($method);
 
         $methodInfo = $this->checkExpiredTimeslot($methodInfo);
         $parcels = $this->getParcels($request, $shipment);
