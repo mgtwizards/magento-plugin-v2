@@ -5,21 +5,30 @@
  */
 namespace Porterbuddy\Porterbuddy\Model;
 
+use DateInterval;
+use DateTime;
+use Magento\Checkout\Model\Session;
+use Magento\Directory\Model\Currency;
 use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\Format;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Quote\Model\Quote\Address\RateResult\ErrorFactory;
 use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use Magento\Quote\Model\Quote\Address\RateResult\MethodFactory;
 use Magento\Sales\Model\Order\Shipment;
+use Magento\Sales\Model\Order\Shipment\Item;
+use Magento\Sales\Model\Order\Shipment\Track;
+use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Shipping\Model\Carrier\AbstractCarrier;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
 use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Rate\ResultFactory;
+use Magento\Shipping\Model\Shipment\Request;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Email\Model\Template\SenderResolver;
 use Porterbuddy\Porterbuddy\Api\Data\MethodInfoInterface;
@@ -38,6 +47,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     const METHOD_EXPRESS_RETURN = 'express-with-return';
     const METHOD_DELIVERY = 'delivery';
     const METHOD_DELIVERY_RETURN = 'delivery-with-return';
+
+    const CONSOLIDATION_FLAG = 'consolidation';
 
     const SHORTCUT_EXPRESS = 'x';
     const SHORTCUT_EXPRESS_RETURN = 'xr';
@@ -100,7 +111,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $localeFormat;
 
     /**
-     * @var \Magento\Sales\Model\Order\Shipment\TrackFactory
+     * @var TrackFactory
      */
     protected $salesOrderShipmentTrackFactory;
 
@@ -135,12 +146,12 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $rateResultFactory;
 
     /**
-     * @var \Magento\Email\Model\Template\SenderResolver
+     * @var SenderResolver
      */
     protected $senderResolver;
 
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var Session
      */
     protected $session;
 
@@ -153,7 +164,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         Format $localeFormat,
         MethodFactory $rateMethodFactory,
         ResultFactory $rateResultFactory,
-        \Magento\Sales\Model\Order\Shipment\TrackFactory $trackFactory,
+        TrackFactory $trackFactory,
         Packager $packager,
         Timeslots $timeslots,
         ScopeConfigInterface $scopeConfig,
@@ -161,7 +172,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         ErrorFactory $rateErrorFactory,
         GetProductSalableQtyInterface $getProductSalableQty,
         LoggerInterface $logger,
-        \Magento\Checkout\Model\Session $session,
+        Session $session,
         array $data = []
     ) {
         $this->api = $api;
@@ -184,7 +195,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * {@inheritdoc}
      */
-    public function proccessAdditionalValidation(\Magento\Framework\DataObject $request)
+    public function proccessAdditionalValidation(DataObject $request)
     {
         if ('NO' !== $request->getDestCountryId()) {
             $this->_logger->warning("Destination country `{$request->getDestCountryId()}` is not supported.");
@@ -201,7 +212,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeliveryConfirmationTypes(\Magento\Framework\DataObject $params = null)
+    public function getDeliveryConfirmationTypes(DataObject $params = null)
     {
         // make default option preselected as it goes first
         if ($this->helper->isRequireSignatureDefault()) {
@@ -220,7 +231,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * {@inheritdoc}
      */
-    public function getContentTypes(\Magento\Framework\DataObject $params)
+    public function getContentTypes(DataObject $params)
     {
         return [
             '' => __('-- Product names --'),
@@ -232,11 +243,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * Interface method used to get additional tracking info in tracking popup
      *
      * @param string $number
-     * @return \Magento\Framework\DataObject|array
+     * @return DataObject|array
      */
     public function getTrackingInfo($number)
     {
-        /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
+        /** @var Track $track */
         $track = $this->salesOrderShipmentTrackFactory->create()->load($number, 'track_number');
 
         return [
@@ -307,20 +318,20 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $quote = $item->getQuote();
 
         try {
-            $parameters = $this->prepareAvailabilityData($request);
+            $parameters = $this->prepareAvailabilityData($request, $quote);
             $pbPreviousRequest = $this->session->getPbPreviousRequest();
             $pbCurrentRequest = array('destinationAddress' => $parameters['destinationAddress'], 'parcels' => $parameters['parcels']);
             $options = $this->session->getPbOptions();
-            $now = new \DateTime("now");
+            $now = new DateTime("now");
 
             if(!$pbPreviousRequest || !$options || !$pbPreviousRequest['expiry'] || $pbPreviousRequest['expiry'] < $now || !$pbPreviousRequest['request'] || $pbPreviousRequest['request'] != $pbCurrentRequest ){
 
                 $options = $this->api->getAvailability($parameters);
                 $this->session->setPbOptions($options);
-                $refreshTime = new \DateTime("now");
-                $refreshTime->add(new \DateInterval('P0DT0H1M0S'));
+                $refreshTime = new DateTime("now");
+                $refreshTime->add(new DateInterval('P0DT0H1M0S'));
                 if($options && $options['deliveryWindows'] && $options['deliveryWindows'][0]){
-                    $expirytime = new \DateTime($options['deliveryWindows'][0]['expiresAt']);
+                    $expirytime = new DateTime($options['deliveryWindows'][0]['expiresAt']);
                     $refreshTime = $refreshTime > $expirytime?$expirytime:$refreshTime;
                 }
                 $pbPreviousRequest = array( 'request' => $pbCurrentRequest, 'expiry' => $refreshTime );
@@ -328,7 +339,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
             }
 
-        } catch (\Porterbuddy\Porterbuddy\Exception $e) {
+        } catch (Exception $e) {
             // details logged
             return $result;
         } catch (\Exception $e) {
@@ -346,7 +357,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 $scheduledOptions[] = $option;
             }
         }
-
+        if($options['consolidatedWindow']) {
+            $scheduledOptions[] = $options['consolidatedWindow'];
+        }
         if (true === $request->getFreeShipping()) {
             $this->_logger->info("collectRates - free shipping for quote {$quote->getId()}", [
                 'applied_rule_ids' => $quote->getAppliedRuleIds(),
@@ -485,7 +498,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     {
         if (null === $this->baseCurrencyRate) {
             // TODO: throw error if base currency rate is not defined
-            /** @var \Magento\Directory\Model\Currency $currency */
+            /** @var Currency $currency */
             $currency = $this->currencyFactory->create();
             $this->baseCurrencyRate = $currency
                 ->load($responseCurrencyCode)
@@ -578,8 +591,8 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \Porterbuddy\Porterbuddy\Exception
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws Exception
+     * @throws LocalizedException
      */
     public function requestToShipment($request)
     {
@@ -599,7 +612,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             $parameters = $this->prepareCreateOrderData($request);
             $idempotencyKey = $this->getShipmentIdempotencyKey($request);
             $orderDetails = $this->api->createOrder($parameters, $idempotencyKey);
-        } catch (\Porterbuddy\Porterbuddy\Exception $e) {
+        } catch (Exception $e) {
             $this->errorNotifier->notify($e, $shipment, $request);
             $shipment->setPorterbuddyErrorNotified(true);
 
@@ -629,7 +642,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         // we can't provide tracking numbers by standard mechanism either. So we will assign them manually to shipment
 
         $trackingNumber = $orderDetails['orderId'];
-        /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
+        /** @var Track $track */
         $track = $this->salesOrderShipmentTrackFactory->create();
         $track
             ->setNumber($trackingNumber)
@@ -639,7 +652,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
 
         if (!empty($orderDetails['deliveryReference'])) {
             $trackingNumber = $orderDetails['deliveryReference'];
-            /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
+            /** @var Track $track */
             $track = $this->salesOrderShipmentTrackFactory->create();
             $track
                 ->setNumber($trackingNumber)
@@ -659,10 +672,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
-     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @param Request $request
      * @return string|null
      */
-    public function getShipmentIdempotencyKey(\Magento\Shipping\Model\Shipment\Request $request)
+    public function getShipmentIdempotencyKey(Request $request)
     {
         $shipment = $request->getOrderShipment();
         $order = $shipment->getOrder();
@@ -685,9 +698,9 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * @param RateRequest $request
      * @return array
-     * @throws \Porterbuddy\Porterbuddy\Exception
+     * @throws Exception
      */
-    public function prepareAvailabilityData(RateRequest $request)
+    public function prepareAvailabilityData(RateRequest $request, Quote $quote)
     {
         $params = [];
 
@@ -716,8 +729,12 @@ class Carrier extends AbstractCarrier implements CarrierInterface
             'country' => $request->getDestCountryId(),
         ];
 
+        $params['recipient'] = [
+            'email' => $quote->getCustomerEmail()
+        ];
         // create availability check context
         $params['parcels'] = $this->packager->estimateParcels($request);
+        $params['items'] = $this->getItems($request->getAllItems());
         $params['products'] = [self::METHOD_EXPRESS, self::METHOD_DELIVERY];
 
         if ($this->helper->getReturnEnabled()) {
@@ -738,11 +755,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * Prepares request payload for create order API call
      *
-     * @param \Magento\Shipping\Model\Shipment\Request $request
+     * @param Request $request
      * @return array
-     * @throws \Porterbuddy\Porterbuddy\Exception
+     * @throws Exception
      */
-    protected function prepareCreateOrderData(\Magento\Shipping\Model\Shipment\Request $request)
+    protected function prepareCreateOrderData(Request $request)
     {
         $shipment = $request->getOrderShipment();
         $order = $shipment->getOrder();
@@ -791,18 +808,25 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 'email' => $request->getRecipientEmail(),
                 'phoneCountryCode' => $deliveryPhone[0] ?: $defaultPhoneCode,
                 'phoneNumber' => $deliveryPhone[1],
-                'deliveryWindow' => [
-                    'start' => $this->helper->formatApiDateTime($methodInfo->getStart()),
-                    'end' => $this->helper->formatApiDateTime($methodInfo->getEnd()),
-                    'token' => $order->getPbToken(),
-                ],
                 'verifications' => $this->getVerifications($shipment),
             ],
             'parcels' => $parcels,
+            'items' => $this->getItems($shipment->getAllItems()),
             'product' => $methodInfo->getProduct(),
             'orderReference' => $order->getIncrementId(),
             'courierInstructions' => $order->getPbComment() ?: '',
         ];
+        if($methodInfo->isConsolidated()){
+            $parameters['destination']['consolidatedWindow'] = [
+                'token' => $order->getPbToken(),
+            ];
+        }else{
+            $parameters['destination']['deliveryWindow'] = [
+                'start' => $this->helper->formatApiDateTime($methodInfo->getStart()),
+                'end' => $this->helper->formatApiDateTime($methodInfo->getEnd()),
+                'token' => $order->getPbToken(),
+            ];
+        }
 
         $transport = new DataObject(['parameters' => $parameters]);
         $this->eventManager->dispatch('porterbuddy_create_order_data', [
@@ -815,15 +839,78 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * Returns items output from an array of Magento order line item
+     *
+     * @param array \Magento\Quote\Model\Quote\Item $items
+     * @return array
+     */
+    public function getItems(array $items)
+    {
+        $returnItems = [];
+
+        /** @var \Magento\Quote\Model\Quote\Item $item */
+        foreach($items as $item) {
+            $_product = $item->getProduct();
+            $widthCm = $this->helper->convertDimensionToCm(
+                    $item->getData('params/width'),
+                    $item->getData('params/dimension_units')
+                ) ?: $this->helper->getDefaultProductWidth();
+
+            $heightCm = $this->helper->convertDimensionToCm(
+                $item->getData('params/height'),
+                $item->getData('params/dimension_units')
+                ) ?: $this->helper->getDefaultProductHeight();
+
+            $depthCm = $this->helper->convertDimensionToCm(
+                $item->getData('params/length'),
+                $item->getData('params/dimension_units')
+                ) ?: $this->helper->getDefaultProductLength();
+
+            $weightGrams = $this->helper->convertWeightToGrams(
+                $item->getData('params/weight'),
+                $item->getData('params/weight_unit')
+                ) ?: $this->helper->getDefaultProductWeight();
+
+
+            $category = '';
+            if($_product->getCategory()){
+                $category = $_product->getCategory()->getName();
+            }
+            $imageUrls = [];
+            foreach($_product->getMediaGalleryImages() as $image){
+                $imageUrls[] = $image->getData('url');
+            }
+            $returnItems[] = array(
+
+                'weightGrams' => $weightGrams,
+                'widthCm' => $widthCm,
+                'heightCm' => $heightCm,
+                'depthCm' => $depthCm,
+                'name' => $_product->getName(),
+                'sku' => $_product->getSku(),
+                'price' => array(
+                    'fractionalDenomination' => round($_product->getPrice()*100),
+                    'currency' => 'NOK'
+                ),
+                'category' => $category,
+                'brand' => $_product->getAttributeText('manufacturer'),
+                'imageUrlArray' => $imageUrls,
+                'quantity' => $_product->getQty()
+            );
+        }
+        return $returnItems;
+    }
+
+    /**
      * For passed dates, get new closest timeslot
      *
      * @param MethodInfoInterface $methodInfo
      * @return MethodInfoInterface
-     * @throws \Porterbuddy\Porterbuddy\Exception
+     * @throws Exception
      */
     public function checkExpiredTimeslot(MethodInfoInterface $methodInfo)
     {
-        $scheduledDate = new \DateTime($methodInfo->getStart());
+        $scheduledDate = new DateTime($methodInfo->getStart());
         $currentTime = $this->helper->getCurrentTime();
         if ($currentTime > $scheduledDate) {
             $this->_logger->error("Delivery timeslot `{$methodInfo->getStart()}` expired.");
@@ -836,15 +923,15 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * Creates shipment packages if needed, exports to Porterbuddy API format
      *
-     * @param \Magento\Shipping\Model\Shipment\Request $request
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param Request $request
+     * @param Shipment $shipment
      * @return array
-     * @throws \Porterbuddy\Porterbuddy\Exception
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws Exception
+     * @throws LocalizedException
      */
     public function getParcels(
-        \Magento\Shipping\Model\Shipment\Request $request,
-        \Magento\Sales\Model\Order\Shipment $shipment
+        Request $request,
+        Shipment $shipment
     ) {
         if (!$shipment->getPackages() || !is_array($shipment->getPackages())) {
             $packages = $this->packager->createPackages($request);
@@ -864,7 +951,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                     'packages' => $shipment->getPackages()
                 ]
             );
-            throw new \Porterbuddy\Porterbuddy\Exception(__('There was an error preparing parcels.'));
+            throw new Exception(__('There was an error preparing parcels.'));
         }
         return $parcels;
     }
@@ -872,10 +959,10 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     /**
      * Returns verification options based on shipment packages params, products and default settings
      *
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param Shipment $shipment
      * @return array
      */
-    public function getVerifications(\Magento\Sales\Model\Order\Shipment $shipment)
+    public function getVerifications(Shipment $shipment)
     {
         $order = $shipment->getOrder();
         $packages = $shipment->getPackages();
@@ -911,7 +998,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $minAge = $this->helper->getMinAgeCheckDefault();
         $minAgeAttr = $this->helper->getMinAgeCheckAttr();
         if ($minAgeAttr) {
-            /** @var \Magento\Sales\Model\Order\Shipment\Item $item */
+            /** @var Item $item */
             foreach ($shipment->getAllItems() as $item) {
                 $product = $item->getOrderItem()->getProduct();
                 $value = $product->getData($minAgeAttr);
@@ -945,18 +1032,18 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * - always required if set by default
      * - required if product attribute is set and at least one product in order is marked true
      *
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param Shipment $shipment
      * @param int $default
      * @param string|null $attributeCode
      * @return bool
      */
-    protected function isVerificationRequired(\Magento\Sales\Model\Order\Shipment $shipment, $default, $attributeCode)
+    protected function isVerificationRequired(Shipment $shipment, $default, $attributeCode)
     {
         $result = $default;
 
         if (!$result && $attributeCode) {
             // true if at least one product is true
-            /** @var \Magento\Sales\Model\Order\Shipment\Item $item */
+            /** @var Item $item */
             foreach ($shipment->getAllItems() as $item) {
                 $product = $item->getOrderItem()->getProduct();
                 if ($product->getData($attributeCode)) {

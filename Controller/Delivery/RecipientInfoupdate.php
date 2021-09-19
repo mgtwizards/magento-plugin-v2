@@ -20,7 +20,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote\AddressFactory;
 use Magento\Quote\Model\QuoteRepository;
 
-class Postcodeupdate extends Action
+class RecipientInfoupdate extends Action
 {
     /**
      * @var Validator
@@ -119,6 +119,8 @@ class Postcodeupdate extends Action
 
         try {
             $postcode = $this->getRequest()->getPostValue('postcode');
+            $street = $this->getRequest()->getPostValue('street');
+            $email = $this->getRequest()->getPostValue('email');
             $quote = $this->session->getQuote();
 
             $shippingAddress = $quote->getShippingAddress();
@@ -131,16 +133,24 @@ class Postcodeupdate extends Action
                 $shippingAddress = $this->quoteAddressFactory->create();
             }
             $shippingAddress->setPostcode($postcode);
+            $shippingAddress->setStreet($street);
+            $shippingAddress->setEmail($email);
             $quote->setShippingAddress($shippingAddress);
             $this->quoteRepository->save($quote);
 
+            $address_array = array(
+                'postal_code' => $postcode,
+                'country' => 'no',
+                'email' => $email,
+                'street_address' => $street
+            );
 
             $klarnaQuote = $this->session->getKlarnaQuote();
 
             $create = $this->kasper->generateUpdateRequest($quote);
             $reqData = $create->getRequest();
 
-            $reqData['billing_address'] = ['postal_code'=> $postcode];
+            $reqData['billing_address'] = $address_array;
 
             $klarnaResult = $this->checkout->updateOrder($klarnaQuote->getKlarnaCheckoutId(), $reqData);
             return $result->setData(['errors' => false, 'message' => json_encode($klarnaResult)]);

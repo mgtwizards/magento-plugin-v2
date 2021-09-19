@@ -20,6 +20,7 @@ class MethodInfo extends \Magento\Framework\DataObject
     const KEY_DATE_LABEL = 'date_label';
     const KEY_LABEL = 'label';
     const KEY_WINDOWS = 'windows';
+    const KEY_CONSOLIDATED = 'consolidated';
     /**#@-*/
 
     /**
@@ -100,6 +101,22 @@ class MethodInfo extends \Magento\Framework\DataObject
     public function setReturn($return)
     {
         return $this->setData(self::KEY_RETURN, $return);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConsolidated()
+    {
+        return $this->getData(self::KEY_CONSOLIDATED);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConsolidated($consolidated)
+    {
+        return $this->setData(self::KEY_CONSOLIDATED, $consolidated);
     }
 
     /**

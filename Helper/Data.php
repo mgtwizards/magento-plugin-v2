@@ -1142,11 +1142,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             default:
                 throw new Exception(__('Unknown product `%1`.', $option['product']));
         }
-
         if ($skipDate) {
             return $type;
         }
 
+        if(!in_array('start', $option)){
+            return "{$type}_" . Carrier::CONSOLIDATION_FLAG;
+        }
         $start = new \DateTime($option['start']);
         $end = new \DateTime($option['end']);
 
@@ -1251,17 +1253,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         if ($parts) {
-            $date = array_shift($parts);
-            $timeStart = array_shift($parts);
-            $timeEnd = array_shift($parts);
+            $firstElement = array_shift($parts);
+            if($firstElement == Carrier::CONSOLIDATION_FLAG){
+                $result->setConsolidated(true);
+            }
+            else {
+                $date = $firstElement;
 
-            if ($date && $timeStart && $timeEnd) {
-                // 180830+02:00 1000
-                $start = \DateTime::createFromFormat('ymdP Hi', "$date $timeStart");
-                $end = \DateTime::createFromFormat('ymdP Hi', "$date $timeEnd");
+                $timeStart = array_shift($parts);
+                $timeEnd = array_shift($parts);
 
-                $result->setStart($start->format(\DateTime::ATOM));
-                $result->setEnd($end->format(\DateTime::ATOM));
+                if ($date && $timeStart && $timeEnd) {
+                    // 180830+02:00 1000
+                    $start = \DateTime::createFromFormat('ymdP Hi', "$date $timeStart");
+                    $end = \DateTime::createFromFormat('ymdP Hi', "$date $timeEnd");
+
+                    $result->setStart($start->format(\DateTime::ATOM));
+                    $result->setEnd($end->format(\DateTime::ATOM));
+                }
             }
         }
     }

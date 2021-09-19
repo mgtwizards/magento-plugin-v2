@@ -67,6 +67,17 @@ interface MethodInfoInterface
     public function setReturn($return);
 
     /**
+     * @return bool
+     */
+    public function isConsolidated();
+
+    /**
+     * @param bool $consolidated
+     * @return $this
+     */
+    public function setConsolidated($consolidated);
+
+    /**
      * @return string
      */
     public function getDateKey();

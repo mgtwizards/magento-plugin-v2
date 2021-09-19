@@ -14,6 +14,7 @@ define([
     'Magento_Checkout/js/model/postcode-validator',
     'Magento_Checkout/js/model/shipping-service',
     'Magento_Checkout/js/model/quote',
+    'Magento_Customer/js/model/customer',
     'Klarna_Kco/js/action/select-shipping-method',
     'Klarna_Kco/js/model/iframe',
     'mage/storage',
@@ -36,6 +37,7 @@ define([
     postcodeValidator,
     shippingService,
     quote,
+    customer,
     kcoShippingMethod,
     klarna,
     storage,
@@ -75,9 +77,35 @@ define([
 
             }.bind(this));
             quote.shippingAddress.subscribe(function(address){
-                if(window.pbSetRecipientInfo){
-                    window.pbSetRecipientInfo({postCode: address.postcode});
+                if(!window.pbRecipientInfo ||
+                    window.pbRecipientInfo.postcode != address.postcode ||
+                    window.pbRecipientInfo.street != address.street
+                ){
+                    window.pbRecipientInfo.postcode = address.postcode;
+                    window.pbRecipientInfo.street = address.street;
+                    var email = '';
+                    if (customer.isLoggedIn()) {
+                        email = customer.customerData.email;
+                    } else {
+                        email = quote.guestEmail;
+                    }
+                    if( email.length == 0 && window.pbRecipientInfo.email && window.pbRecipientInfo.email.length > 0){
+                        email = window.pbRecipientInfo.email;
+                    }else{
+                        window.pbRecipientInfo.email = email;
+                    }
+                    if(window.pbSetRecipientInfo){
+                        window.pbSetRecipientInfo({
+                            postCode: address.postcode,
+                            streetAddress: address.street,
+                            email: address.email
+                        });
+                    }
+                    if(window.pbSetRecipientInfoLocked){
+                        window.pbSetRecipientInfoLocked(true);
+                    }
                 }
+
             });
 
 
@@ -93,8 +121,14 @@ define([
                 hasPostcode = true;
             }
             var hasFullAddress = false;
-            if (address && address.street && address.street.length > 0){
+            if (hasPostcode && address && address.street && address.street.length > 0){
                 hasFullAddress = true;
+            }
+            var email = '';
+            if (customer.isLoggedIn()) {
+                email = customer.customerData.email;
+            } else {
+                email = quote.guestEmail;
             }
             var hasDefault = false;
             if (rates.porterbuddy && rates.porterbuddy.length > 0) {
@@ -151,8 +185,16 @@ define([
             }
             if (!window.porterbuddy) {
                 var recipientInfo = {};
-                if(hasPostcode){
+
+                if(hasFullAddress){
+                    recipientInfo.streetAddress = address.street
                     recipientInfo.postCode = address.postcode;
+                    recipientInfo.email = email;
+                    window.pbRecipientInfo = {
+                        'postcode' : address.postcode,
+                        'street': address.street,
+                        'email': email
+                    };
                 }
                 var text = {};
                 if(this.checkoutWidgetTitle && this.checkoutWidgetTitle.length > 0){
@@ -174,9 +216,7 @@ define([
                     homeDeliveryOptions: homeDeliveryRates,
                     pickupPointOptions: pickupPointRates,
                     storeOptions: collectInStoreRates,
-                    showPostCodeInput: true,
-                    postCodeEditable: !hasFullAddress,
-                    storedPostCodeDelay: 500,
+                    recipientInfoLocked: hasFullAddress,
                     recipientInfo: recipientInfo,
                     text: text,
                     onSelectionChanged: function (type, selectedShipping) {
@@ -187,13 +227,14 @@ define([
                         window.pbForceRefresh = callbacks.forceRefresh;
                         window.pbSetRecipientInfo = callbacks.setRecipientInfo;
                         window.pbRefreshShippingOptions = callbacks.refreshShippingOptions;
+                        window.pbSetRecipientInfoLocked = callbacks.setRecipientInfoLocked
                         if(window.pbDelayRefresh){
                             window.pbDelayRefresh = false;
                             window.pbRefreshShippingOptions();
                         }
                     },
-                    onPostCodeEntered: function(postcode) {
-                        this.setPostcode(postcode);
+                    onRecipientInfoEntered: function(recipientInfo) {
+                        this.setRecipientInfo(recipientInfo);
                     }.bind(this),
                     selectionPropertyChangeListeners: [
                         {
@@ -241,12 +282,7 @@ define([
                     ]
                 };
             }else{
-                if(!hasPostcode){
-                    if(window.pbSetRecipientInfo) {
-                        window.pbSetRecipientInfo({postCode: ""});
-                    }
-                }
-                window.porterbuddy.postCodeEditable = !hasFullAddress;
+
                 window.porterbuddy.homeDeliveryOptions = homeDeliveryRates;
                 window.porterbuddy.pickupPointOptions = pickupPointRates;
                 window.porterbuddy.storeOptions = collectInStoreRates;
@@ -322,29 +358,57 @@ define([
             });
         },
 
-        setPostcode: function(postCode){
-            console.log("inside setPostcode");
+        setRecipientInfo: function(recipient){
             var address = quote.shippingAddress();
             if(!address) {
-                address = {};
+                address = { };
             }
-            address.postcode = postCode;
             address.countryId = 'NO';
+            var addressToSave = { 'country_id': 'NO' };
+
+            if (!window.pbRecipientInfo){
+                window.pbRecipientInfo = {
+                    'postcode' : '',
+                    'street': '',
+                    'email': ''
+                };
+            }
+            if(window.pbRecipientInfo.postcode == recipient.postCode &&
+                 window.pbRecipientInfo.street == recipient.streetAddress &&
+                window.pbRecipientInfo.email == recipient.email){
+                //nothing has changed
+                return;
+            }
+            if(recipient.postCode && recipient.postCode.length > 0 ){
+                address.postcode = recipient.postCode;
+                addressToSave.postcode = recipient.postCode;
+                window.pbRecipientInfo.postcode = recipient.postCode;
+
+            }
+            if(recipient.streetAddress && recipient.streetAddress.length > 0){
+                address.street = recipient.streetAddress;
+                addressToSave.street = recipient.streetAddress;
+                window.pbRecipientInfo.street = recipient.streetAddress;
+            }
+            if(recipient.email && recipient.email.length > 0){
+                addressToSave.email = recipient.email;
+                if (customer.isLoggedIn()) {
+                    customer.customerData.email = recipient.email;
+                } else {
+                    quote.guestEmail = recipient.email;
+                }
+                window.pbRecipientInfo.email = recipient.email;
+            }
             var shippingAddress = createShippingAddressAction(address);
             selectShippingAddressAction(shippingAddress);
 
-            var addressDataToSave = {
-                "country_id": 'NO',
-                "postcode": postCode
-            };
+
             checkoutData.setShippingAddressFromData(addressDataToSave);
             klarna.suspend();
             $.ajax({
                 type: 'POST',
-                url: mageUrl.build('porterbuddy/delivery/postcodeupdate'),
-                data: {
-                    postcode: postCode
-                }
+                url: mageUrl.build('porterbuddy/delivery/recipientInfoUpdate'),
+                data: addressToSave
             }).always(function(){
                 klarna.resume();
             }).done(function (data) {
@@ -354,7 +418,7 @@ define([
                     return;
                 }
             }).fail(function () {
-                console.error("error updating postcode in klarna");
+                console.error("error updating address in klarna");
             });
 
         }
