@@ -79,17 +79,14 @@ define([
             quote.shippingAddress.subscribe(function(address){
                 if(!window.pbRecipientInfo ||
                     window.pbRecipientInfo.postcode != address.postcode ||
-                    window.pbRecipientInfo.street != address.street
+                    window.pbRecipientInfo.street != address.street[0]
                 ){
+                    if(!window.pbRecipientInfo)
+                        window.pbRecipientInfo = {};
                     window.pbRecipientInfo.postcode = address.postcode;
-                    window.pbRecipientInfo.street = address.street;
-                    var email = '';
-                    if (customer.isLoggedIn()) {
-                        email = customer.customerData.email;
-                    } else {
-                        email = quote.guestEmail;
-                    }
-                    if( email.length == 0 && window.pbRecipientInfo.email && window.pbRecipientInfo.email.length > 0){
+                    window.pbRecipientInfo.street = address.street[0];
+                    var email = address.email;
+                    if( (email == null || email.length == 0) && window.pbRecipientInfo.email && window.pbRecipientInfo.email.length > 0){
                         email = window.pbRecipientInfo.email;
                     }else{
                         window.pbRecipientInfo.email = email;
@@ -97,11 +94,15 @@ define([
                     if(window.pbSetRecipientInfo){
                         window.pbSetRecipientInfo({
                             postCode: address.postcode,
-                            streetAddress: address.street,
+                            streetAddress: address.street[0],
                             email: address.email
                         });
                     }
-                    if(window.pbSetRecipientInfoLocked){
+                    if(window.pbSetRecipientInfoLocked &&
+                        address.email != null && address.email.length > 0 &&
+                        address.postcode != null && address.postcode.length > 0 &&
+                        address.street != null && address.street.length > 0 && address.street[0].length > 0
+                    ){
                         window.pbSetRecipientInfoLocked(true);
                     }
                 }
@@ -121,27 +122,20 @@ define([
                 hasPostcode = true;
             }
             var hasFullAddress = false;
-            if (hasPostcode && address && address.street && address.street.length > 0){
+            if (hasPostcode && address && address.street && address.street[0] && address.street[0].length > 0){
                 hasFullAddress = true;
             }
-            var email = '';
-            if (customer.isLoggedIn()) {
-                email = customer.customerData.email;
-            } else {
-                email = quote.guestEmail;
-            }
+            var email = address.email;
             var hasDefault = false;
             if (rates.porterbuddy && rates.porterbuddy.length > 0) {
                 var availabilityResponse = JSON.parse(rates.porterbuddy[0].extension_attributes.porterbuddy_info.windows);
-                var deliveryWindows = availabilityResponse.deliveryWindows;
                 var porterbuddyOption = {
                     id: rates.porterbuddy[0].carrier_code,
                     name: rates.porterbuddy[0].carrier_title,
-                    deliveryWindows: deliveryWindows,
+                    availabilityResponse: availabilityResponse,
                     discount: this.pbDiscount,
                     showLeaveAtDoorstep: this.leaveDoorstepEnabled,
                     updateInterval: 300,
-                    onUpdateOption: this.onUpdateDeliveryWindows,
                     default: true
                 };
                 homeDeliveryRates.push(porterbuddyOption);
@@ -187,12 +181,12 @@ define([
                 var recipientInfo = {};
 
                 if(hasFullAddress){
-                    recipientInfo.streetAddress = address.street
+                    recipientInfo.streetAddress = address.street[0];
                     recipientInfo.postCode = address.postcode;
                     recipientInfo.email = email;
                     window.pbRecipientInfo = {
                         'postcode' : address.postcode,
-                        'street': address.street,
+                        'street': address.street[0],
                         'email': email
                     };
                 }
@@ -236,6 +230,22 @@ define([
                     onRecipientInfoEntered: function(recipientInfo) {
                         this.setRecipientInfo(recipientInfo);
                     }.bind(this),
+                   /* getPbAvailability: function(recipientInfo) {
+                        storage.post(
+                            mageUrl.build('porterbuddy/delivery/timeslots'),
+                            JSON.stringify({
+                                refresh: true
+                            }),
+                            true
+                        ).done(function(data) {
+                            if(data.error){
+                                console.error(data.message);
+                            }else {
+                                return(data.timeslots);
+                            }
+                        });
+                    }.bind(this),
+                    */
                     selectionPropertyChangeListeners: [
                         {
                             optionId: "porterbuddy",
@@ -298,7 +308,7 @@ define([
             var selectedRate;
             var groupedRates = pbRateFilter.getGroupedRates();
             if(pbConfig.CARRIER_CODE === selectedShipping.id){
-                if(!selectedShipping.data.deliveryWindow){
+                if(!selectedShipping.data || !selectedShipping.data.deliveryWindow){
                     this.processNewRates(groupedRates());
                 }else {
                     var selectedWindow = selectedShipping.data.deliveryWindow;
@@ -336,28 +346,6 @@ define([
             }
         },
 
-        onUpdateDeliveryWindows: function(callback) {
-            storage.post(
-                mageUrl.build('porterbuddy/delivery/timeslots'),
-                JSON.stringify({
-                    refresh: true
-                }),
-                true
-            ).done(function(data) {
-                if(data.error){
-                    console.error(data.message);
-                }else {
-                    if(!data.timeslots || !data.timeslots.deliveryWindows || data.timeslots.deliveryWindows.length === 0){
-                        pbRateFilter.getRateCacheDisabled()(true);
-                        // see shipping-rate-service
-                        quote.shippingAddress.valueHasMutated();
-                        pbRateFilter.getRateCacheDisabled()(false);
-                    }
-                    callback({deliveryWindows:data.timeslots.deliveryWindows, discount: window.checkoutConfig.porterbuddy.discount * 100});
-                }
-            });
-        },
-
         setRecipientInfo: function(recipient){
             var address = quote.shippingAddress();
             if(!address) {
@@ -386,24 +374,19 @@ define([
 
             }
             if(recipient.streetAddress && recipient.streetAddress.length > 0){
-                address.street = recipient.streetAddress;
+                address.street = [recipient.streetAddress];
                 addressToSave.street = recipient.streetAddress;
                 window.pbRecipientInfo.street = recipient.streetAddress;
             }
             if(recipient.email && recipient.email.length > 0){
                 addressToSave.email = recipient.email;
-                if (customer.isLoggedIn()) {
-                    customer.customerData.email = recipient.email;
-                } else {
-                    quote.guestEmail = recipient.email;
-                }
                 window.pbRecipientInfo.email = recipient.email;
             }
             var shippingAddress = createShippingAddressAction(address);
             selectShippingAddressAction(shippingAddress);
 
 
-            checkoutData.setShippingAddressFromData(addressDataToSave);
+            checkoutData.setShippingAddressFromData(addressToSave);
             klarna.suspend();
             $.ajax({
                 type: 'POST',

@@ -1146,7 +1146,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             return $type;
         }
 
-        if(!in_array('start', $option)){
+        if(!isSet($option['start'])){
             return "{$type}_" . Carrier::CONSOLIDATION_FLAG;
         }
         $start = new \DateTime($option['start']);

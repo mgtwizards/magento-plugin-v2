@@ -7,6 +7,7 @@ namespace Porterbuddy\Porterbuddy\Model;
 
 use DateInterval;
 use DateTime;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Session;
 use Magento\Directory\Model\Currency;
 use Magento\Directory\Model\CurrencyFactory;
@@ -151,6 +152,11 @@ class Carrier extends AbstractCarrier implements CarrierInterface
     protected $senderResolver;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    protected $productRepo;
+
+    /**
      * @var Session
      */
     protected $session;
@@ -168,6 +174,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         Packager $packager,
         Timeslots $timeslots,
         ScopeConfigInterface $scopeConfig,
+        ProductRepositoryInterface $productRepo,
         SenderResolver $senderResolver,
         ErrorFactory $rateErrorFactory,
         GetProductSalableQtyInterface $getProductSalableQty,
@@ -187,6 +194,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
         $this->packager = $packager;
         $this->timeslots = $timeslots;
         $this->senderResolver = $senderResolver;
+        $this->productRepo = $productRepo;
         $this->session = $session;
         $this->getProductSalableQty = $getProductSalableQty->get();
         parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
@@ -357,7 +365,7 @@ class Carrier extends AbstractCarrier implements CarrierInterface
                 $scheduledOptions[] = $option;
             }
         }
-        if($options['consolidatedWindow']) {
+        if(isset($options['consolidatedWindow'])) {
             $scheduledOptions[] = $options['consolidatedWindow'];
         }
         if (true === $request->getFreeShipping()) {
@@ -844,13 +852,17 @@ class Carrier extends AbstractCarrier implements CarrierInterface
      * @param array \Magento\Quote\Model\Quote\Item $items
      * @return array
      */
-    public function getItems(array $items)
+    public function getItems(array $items): array
     {
         $returnItems = [];
 
         /** @var \Magento\Quote\Model\Quote\Item $item */
         foreach($items as $item) {
             $_product = $item->getProduct();
+            if($_product == null){
+                /** @var \Magento\Sales\Model\Order\Shipment\Item $item */
+                $_product = $this->productRepo->getById($item->getProductId());
+            }
             $widthCm = $this->helper->convertDimensionToCm(
                     $item->getData('params/width'),
                     $item->getData('params/dimension_units')
