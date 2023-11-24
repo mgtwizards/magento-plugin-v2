@@ -15,13 +15,13 @@ class Logger extends \Monolog\Logger
      * @param  array   $context The log context
      * @return Boolean Whether the record has been processed
      */
-    public function addRecord($level, $message, array $context = [])
+    public function addRecord($level, $message, array $context = [], $datetime = null): bool
     {
         if ($message instanceof \Exception) {
             $context['is_exception'] = true;
             $context['exception_message'] = $message->getMessage();
         }
 
-        return parent::addRecord($level, $message, $context);
+        return parent::addRecord($level, $message, $context, $datetime);
     }
 }
